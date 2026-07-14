@@ -367,6 +367,16 @@
     padding: 0.1rem 0.5rem; border-radius: 999px; vertical-align: middle; margin-left: 0.4rem;
   }
   .login-chip:hover { background: var(--accent-bg, rgba(168,85,247,0.2)); }
+
+  /* status do sync na nuvem (Pro logado). Silencioso quando tudo certo, gritante quando falha. */
+  .sync-chip {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em;
+    padding: 0.1rem 0.5rem; border-radius: 999px; vertical-align: middle; margin-left: 0.4rem;
+    border: 1px solid transparent; white-space: nowrap; cursor: default;
+  }
+  .sync-chip.is-syncing { color: var(--muted, #94a3b8); background: rgba(148,163,184,0.12); border-color: rgba(148,163,184,0.3); }
+  .sync-chip.is-ok      { color: #34d399; background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.35); }
+  .sync-chip.is-error   { color: #f87171; background: rgba(248,113,113,0.14); border-color: rgba(248,113,113,0.45); cursor: help; }
   .pw-msg { font-size: 0.82rem; margin-top: 0.8rem; min-height: 1em; }
   .pw-msg.ok { color: var(--green); }
   .pw-msg.err { color: var(--red); }
@@ -559,7 +569,7 @@
     <div class="brand">
       <div class="logo">📅</div>
       <div>
-        <h1>Agenda <button class="pro-badge" id="proBadge" style="display:none" title="Sua assinatura Pro">PRO</button><button class="login-chip" id="loginBtn" title="Entrar na sua conta">Entrar</button></h1>
+        <h1>Agenda <button class="pro-badge" id="proBadge" style="display:none" title="Sua assinatura Pro">PRO</button><button class="login-chip" id="loginBtn" title="Entrar na sua conta">Entrar</button><span class="sync-chip" id="syncChip" style="display:none"></span></h1>
         <div class="today-str" id="todayStr"></div>
       </div>
     </div>
@@ -955,6 +965,9 @@
     s.contexts.forEach(c => { if (!s.data[c.id]) s.data[c.id] = { events: [], tasks: [] }; });
     if (!s.contexts.some(c => c.id === s.active)) s.active = s.contexts[0].id;
     s.daysOff = Array.isArray(s.daysOff) ? s.daysOff : []; // day off é global (vale pra todas as agendas)
+    // carimbo do LWW. Store legado (pré-sync) fica com 0: perde de qualquer nuvem que já
+    // tenha sido gravada — de propósito, e por isso applyRemote() guarda backup antes.
+    s.updatedAt = typeof s.updatedAt === "number" ? s.updatedAt : 0;
     // backfill: tarefa agora tem `start` (dia que se inicia). Legado sem start herda o due
     // (start===due => sem "entrega" separada, comportamento antigo preservado).
     s.contexts.forEach(c => {
@@ -987,7 +1000,23 @@
     }
     return freshStore();
   }
-  function save() { localStorage.setItem(KEY, JSON.stringify(store)); }
+  // toda gravação carimba `updatedAt` — é ele que decide quem vence no merge da nuvem (LWW).
+  function save() {
+    store.updatedAt = Date.now();
+    localStorage.setItem(KEY, JSON.stringify(store));
+    schedulePush();
+  }
+  // grava o store SEM carimbar/republicar: usado ao aplicar o que veio da nuvem
+  // (senão o dado baixado viraria "mais novo" e voltaria pra nuvem num laço).
+  function saveLocalOnly() { localStorage.setItem(KEY, JSON.stringify(store)); }
+  function isEmptyStore(s) {
+    if (!s || !s.data) return true;
+    if (Array.isArray(s.daysOff) && s.daysOff.length) return false;
+    return Object.keys(s.data).every(k => {
+      const d = s.data[k] || {};
+      return !(d.events || []).length && !(d.tasks || []).length;
+    });
+  }
   function ctxData() { return store.data[store.active]; }
   function activeCtx() { return store.contexts.find(c => c.id === store.active); }
   // apaga a tarefa e, se for uma tarefa-mãe com prazo, a sua tarefa de entrega gerada.
@@ -1044,6 +1073,109 @@
     authUser = data.session ? data.session.user : null;
     await fetchProStatus();
     render();
+    cloudSync("auth"); // não bloqueia a UI: o app já está usável com o dado local
+  }
+
+  // ---------- sync na nuvem (Pro) ----------
+  // Modelo: UM snapshot JSON do store por usuário, na tabela `snapshots`.
+  // Conflito resolve por last-write-wins usando `store.updatedAt` (carimbo de quem gravou).
+  // NÃO faz merge por item: se dois aparelhos editam offline ao mesmo tempo, o último a
+  // salvar vence e o outro perde as edições daquele intervalo — daí o backup local antes
+  // de aplicar a nuvem. Merge por item é outro projeto (tabelas normalizadas + tombstones).
+  const BAK_KEY = KEY + ".bak";
+  let syncState = { status: "off", msg: "", at: 0 }; // off | syncing | ok | error
+  let pushTimer = null, pulling = false, lastPullAt = 0;
+
+  function canSync() { return !!authUser && authPro === true; }
+  function deviceLabel() {
+    const ua = navigator.userAgent || "";
+    const os = /Android/i.test(ua) ? "Android" : /iPhone|iPad/i.test(ua) ? "iOS"
+             : /Windows/i.test(ua) ? "Windows" : /Mac/i.test(ua) ? "Mac" : "Web";
+    return os;
+  }
+  function setSync(status, msg) {
+    syncState = { status, msg: msg || "", at: Date.now() };
+    renderSyncChip();
+  }
+  function renderSyncChip() {
+    const el = $("#syncChip");
+    if (!el) return;
+    if (!canSync() || syncState.status === "off") { el.style.display = "none"; return; }
+    const map = {
+      syncing: { cls: "is-syncing", txt: "sincronizando…", tip: "Enviando/baixando seus dados" },
+      ok:      { cls: "is-ok",      txt: "☁ sincronizado", tip: "Seus dados estão salvos na nuvem" },
+      error:   { cls: "is-error",   txt: "⚠ sync falhou",  tip: "Erro: " + syncState.msg + "\nSeus dados seguem salvos neste aparelho." }
+    };
+    const s = map[syncState.status] || map.syncing;
+    el.style.display = "";
+    el.className = "sync-chip " + s.cls;
+    el.textContent = s.txt;
+    el.title = s.tip;
+  }
+
+  // Envia o store pra nuvem. Trata o caso silencioso do RLS: quando a policy barra o
+  // UPDATE, o PostgREST devolve 2xx com ZERO linhas — sem `.select()` isso passaria por
+  // "sucesso" e o usuário acharia que salvou. Aqui, 0 linhas = erro na cara.
+  async function pushNow() {
+    if (!canSync()) return;
+    setSync("syncing");
+    try {
+      const { data, error } = await sb
+        .from("snapshots")
+        .upsert({ user_id: authUser.id, data: store, device: deviceLabel() }, { onConflict: "user_id" })
+        .select("user_id");
+      if (error) { setSync("error", error.message); return; }
+      if (!data || !data.length) { setSync("error", "o servidor recusou a gravação (assinatura Pro ativa?)"); return; }
+      setSync("ok");
+    } catch (e) {
+      setSync("error", String((e && e.message) || e));
+    }
+  }
+  function schedulePush() {
+    if (!canSync()) return;
+    if (pushTimer) clearTimeout(pushTimer);
+    setSync("syncing");
+    pushTimer = setTimeout(() => { pushTimer = null; pushNow(); }, 1500);
+  }
+  function flushPush() { // manda agora o que estiver pendente (ao sair/esconder a aba)
+    if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; pushNow(); }
+  }
+
+  // Substitui o local pelo que veio da nuvem — guardando backup do que estava aqui.
+  function applyRemote(remote) {
+    try { localStorage.setItem(BAK_KEY, JSON.stringify(store)); } catch (e) {}
+    store = normalize(remote);
+    saveLocalOnly();
+    selected = iso(new Date());
+    render();
+    setSync("ok");
+  }
+
+  // Decide quem vence e resolve. Roda no login, no boot e ao voltar o foco pra aba.
+  async function cloudSync(reason) {
+    if (!canSync()) { setSync("off"); return; }
+    if (pulling) return;
+    pulling = true;
+    setSync("syncing");
+    try {
+      const { data, error } = await sb
+        .from("snapshots").select("data").eq("user_id", authUser.id).maybeSingle();
+      if (error) { setSync("error", error.message); return; }
+      lastPullAt = Date.now();
+      const remote = data && data.data ? data.data : null;
+      const rAt = remote && typeof remote.updatedAt === "number" ? remote.updatedAt : -1;
+      const lAt = typeof store.updatedAt === "number" ? store.updatedAt : 0;
+
+      if (!remote) { await pushNow(); return; }              // primeira vez: sobe o que existe aqui
+      if (isEmptyStore(store) && !isEmptyStore(remote)) { applyRemote(remote); return; } // aparelho novo
+      if (rAt > lAt) { applyRemote(remote); return; }        // nuvem mais nova
+      if (lAt > rAt) { await pushNow(); return; }            // local mais novo
+      setSync("ok");                                          // empate: nada a fazer
+    } catch (e) {
+      setSync("error", String((e && e.message) || e));
+    } finally {
+      pulling = false;
+    }
   }
 
   async function signIn(email, password) {
@@ -1059,8 +1191,10 @@
     return { ok: true };
   }
   async function signOut() {
+    flushPush(); // não deixa gravação pendente morrer com a sessão
     await sb.auth.signOut();
     authUser = null; authPro = false;
+    setSync("off");
     render();
   }
   function friendlyAuthErr(msg) {
@@ -2328,6 +2462,14 @@
   // setTimeout evita o deadlock conhecido de chamar o SDK dentro do próprio callback.
   sb.auth.onAuthStateChange(() => { setTimeout(syncAuth, 0); });
   syncAuth();
+
+  // sync: ao voltar pra aba, puxa o que outro aparelho gravou (throttle de 15s pra não
+  // martelar o servidor a cada alt-tab). Ao sair/esconder, manda o que estiver pendente.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") { flushPush(); return; }
+    if (canSync() && Date.now() - lastPullAt > 15000) cloudSync("focus");
+  });
+  window.addEventListener("pagehide", flushPush);
 
   render();
 })();
