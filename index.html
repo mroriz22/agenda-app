@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-0: #0f172a;
+    --bg-1: #1e293b;
+    --txt: #f8fafc;
+    --muted: #94a3b8;
+    --faint: #64748b;
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.16);
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --accent: #a855f7;
+    --accent-2: #c084fc;
+    --indigo: #6366f1;
+    --glow-1: rgba(168, 85, 247, 0.12);
+    --glow-2: rgba(99, 102, 241, 0.10);
+    --accent-bg: rgba(168, 85, 247, 0.12);
+    --accent-bg-faint: rgba(168, 85, 247, 0.06);
+    --accent-border: rgba(168, 85, 247, 0.4);
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --gold: #fbbf24;
+    --discard: #ec4899;  /* alerta: descartar */
+    /* eisenhower */
+    --q1: #ef4444;  /* fazer */
+    --q2: #22c55e;  /* agendar/foco */
+    --q3: #f59e0b;  /* delegar */
+    --q4: #ec4899;  /* eliminar / descartar */
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    background:
+      radial-gradient(900px 500px at 12% -10%, var(--glow-1), transparent 60%),
+      radial-gradient(700px 600px at 95% 0%, var(--glow-2), transparent 60%),
+      linear-gradient(135deg, var(--bg-0), var(--bg-1));
+    color: var(--txt);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 1.5rem; }
+
+  /* ---------- HEADER ---------- */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .brand { display: flex; align-items: center; gap: 0.75rem; }
+  .logo {
+    width: 42px; height: 42px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--accent), var(--indigo));
+    box-shadow: 0 8px 20px -6px var(--accent);
+  }
+  .brand h1 { font-size: 1.3rem; letter-spacing: -0.02em; }
+  .brand .today-str { font-size: 0.82rem; color: var(--muted); text-transform: capitalize; }
+
+  .stats { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-start; }
+  .stat {
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 12px; padding: 0 0.95rem; width: 146px; height: 62px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .stat b { font-size: 1.35rem; letter-spacing: -0.02em; display: block; line-height: 1.15; }
+  .stat span { font-size: 0.7rem; color: var(--muted); display: block; white-space: nowrap; }
+  .stat.warn b { color: var(--amber); }
+  .stat.inbox b { color: var(--accent-2); }
+
+  /* ---------- TABS ---------- */
+  .tabs { display: flex; gap: 4px; background: var(--bg-0); border: 1px solid var(--line); border-radius: 12px; padding: 4px; margin-bottom: 1.5rem; width: fit-content; }
+  .tabs button {
+    padding: 0.5rem 1.1rem; border: 0; border-radius: 9px; background: transparent;
+    color: var(--muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .tabs button.active { background: linear-gradient(135deg, var(--accent), var(--indigo)); color: #fff; box-shadow: 0 8px 18px -10px var(--accent); }
+  .tabs .badge { font-size: 0.7rem; background: rgba(255,255,255,0.18); border-radius: 999px; padding: 0.05rem 0.4rem; }
+
+  /* ---------- LAYOUT ---------- */
+  .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1.25rem; align-items: start; }
+  @media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 18px; padding: 1.25rem;
+    backdrop-filter: blur(10px);
+  }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 0.5rem; }
+  .panel-head h2 { font-size: 1.05rem; letter-spacing: -0.01em; }
+  .panel-head .sub { font-size: 0.8rem; color: var(--muted); }
+
+  /* ---------- CALENDAR ---------- */
+  .cal-nav { display: flex; align-items: center; gap: 0.4rem; }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line);
+    background: var(--card); color: var(--txt); cursor: pointer; font-size: 1rem;
+    display: grid; place-items: center; transition: background .15s, border-color .15s;
+  }
+  .icon-btn:hover { background: var(--card-hover); border-color: var(--line-strong); }
+  .icon-btn.locked { opacity: 0.4; position: relative; }
+  .icon-btn.locked::after { content: "🔒"; position: absolute; top: -6px; right: -6px; font-size: 0.55rem; }
+  .month-label { font-size: 0.98rem; font-weight: 600; min-width: 150px; text-align: center; text-transform: capitalize; }
+
+  .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 6px; }
+  .weekdays span { text-align: center; font-size: 0.7rem; color: var(--faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .day {
+    aspect-ratio: 1 / 1; border-radius: 10px; border: 1px solid transparent;
+    background: transparent; color: var(--txt); cursor: pointer; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 0.9rem; transition: background .12s, border-color .12s;
+  }
+  .day:hover { background: var(--card-hover); }
+  .day.muted { color: var(--faint); opacity: 0.5; }
+  .day.locked { opacity: 0.3; }
+  .day.locked:hover { background: var(--accent-bg-faint); opacity: 0.55; }
+  .day.locked:hover::after { content: "🔒"; position: absolute; top: 4px; right: 5px; font-size: 0.55rem; }
+  .day.today { border-color: var(--accent); color: var(--accent-2); font-weight: 700; }
+  .day.selected { background: linear-gradient(135deg, var(--accent), var(--indigo)); color: #fff; border-color: transparent; box-shadow: 0 8px 18px -8px var(--accent); }
+  .day.selected.today { color: #fff; }
+  .day .dots { display: flex; gap: 2px; margin-top: 3px; height: 5px; }
+  .day .dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-2); }
+  .day .dots i.imp { background: var(--gold); }
+  .day.selected .dots i { background: #fff; }
+  .day .task-flag { position: absolute; top: 4px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  /* barra de intervalo (Gantt-lite): tarefa multi-dia liga início→prazo pelos dias */
+  .day .span-bar { position: absolute; bottom: 4px; left: 0; right: 0; height: 3px; border-radius: 2px; background: var(--accent); opacity: 0.9; }
+  .day .span-bar.is-start { left: 46%; }
+  .day .span-bar.is-end { right: 46%; background: var(--gold); }
+  .day .span-bar.is-start.is-end { left: 46%; right: 46%; }
+  .day.selected .span-bar { background: rgba(255,255,255,0.95); }
+  .day.selected .span-bar.is-end { background: var(--gold); }
+
+  /* ---------- CHRONO TIMELINE ---------- */
+  .chrono { margin-bottom: 1.1rem; }
+  .chrono-legend { display: flex; align-items: center; gap: 1rem; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; flex-wrap: wrap; }
+  .chrono-legend .lg { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .chrono-legend .sw { width: 12px; height: 8px; border-radius: 3px; }
+  .timeline { position: relative; height: 46px; border-radius: 10px; background: var(--bg-0); border: 1px solid var(--line); overflow: hidden; }
+  .peak-zone {
+    position: absolute; top: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(251,191,36,0.22), rgba(251,191,36,0.08));
+    border-left: 1px solid rgba(251,191,36,0.4); border-right: 1px solid rgba(251,191,36,0.4);
+  }
+  .peak-zone .peak-label { position: absolute; top: 3px; left: 6px; font-size: 0.62rem; color: var(--gold); font-weight: 700; letter-spacing: 0.03em; }
+  .tl-hours { position: absolute; bottom: 3px; left: 0; right: 0; height: 12px; }
+  .tl-hours span { position: absolute; transform: translateX(-50%); font-size: 0.6rem; color: var(--faint); }
+  .tl-ev {
+    position: absolute; top: 13px; width: 9px; height: 9px; border-radius: 50%;
+    transform: translateX(-50%); border: 2px solid var(--bg-0); cursor: default;
+  }
+  .tl-ev.imp { background: var(--gold); box-shadow: 0 0 0 3px rgba(251,191,36,0.2); }
+  .tl-ev.norm { background: var(--accent-2); }
+  /* barra da duração: começa no horário e se estende 1h (fora do pico) ou 2h (dentro). */
+  .tl-block { position: absolute; top: 15px; height: 5px; border-radius: 3px; opacity: 0.45; }
+  .tl-block.imp { background: var(--gold); }
+  .tl-block.norm { background: var(--accent-2); }
+
+  /* ---------- DAY PANEL ---------- */
+  .empty { text-align: center; color: var(--faint); font-size: 0.88rem; padding: 1.5rem 0.5rem; }
+  .empty .big { font-size: 1.6rem; display: block; margin-bottom: 0.4rem; opacity: 0.7; }
+
+  .item {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.75rem; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--card); margin-bottom: 0.55rem; transition: border-color .15s, background .15s;
+  }
+  .item:hover { border-color: var(--line-strong); }
+  .item.imp { border-left: 3px solid var(--gold); }
+  .item.discard { border-left: 3px solid var(--discard); background: rgba(236,72,153,0.07); }
+  .task.discard { border-left: 3px solid var(--discard); background: rgba(236,72,153,0.07); }
+  .badge-chip.discard { color: #fff; background: var(--discard); }
+  .item .time {
+    font-size: 0.82rem; font-weight: 700; color: var(--accent-2);
+    background: var(--accent-bg); border: 1px solid var(--accent-border);
+    border-radius: 8px; padding: 0.25rem 0.5rem; white-space: nowrap; line-height: 1.2; text-align: center;
+  }
+  .item .body { flex: 1; min-width: 0; }
+  .item .body .t { font-weight: 600; font-size: 0.94rem; word-break: break-word; }
+  .item .body .n { font-size: 0.82rem; color: var(--muted); margin-top: 2px; word-break: break-word; }
+  .item .body .badges { display: flex; gap: 0.35rem; margin-top: 0.4rem; flex-wrap: wrap; }
+  .badge-chip { font-size: 0.68rem; font-weight: 700; padding: 0.12rem 0.45rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.25rem; }
+  .badge-chip.peak { color: #1e1402; background: var(--gold); }
+  .badge-chip.offpeak { color: var(--gold); background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); }
+  .badge-chip.q { color: #fff; }
+  .item .del, .task .del {
+    opacity: 0; background: none; border: 0; color: var(--faint); cursor: pointer;
+    font-size: 1rem; padding: 0.1rem 0.3rem; border-radius: 6px; transition: opacity .15s, color .15s, background .15s;
+  }
+  .item:hover .del, .task:hover .del { opacity: 1; }
+  .item .del:hover, .task .del:hover { color: var(--red); background: rgba(239,68,68,0.1); }
+
+  /* ---------- TASKS ---------- */
+  .task {
+    display: flex; gap: 0.7rem; align-items: center;
+    padding: 0.65rem 0.75rem; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--card); margin-bottom: 0.5rem; transition: border-color .15s;
+  }
+  .task:hover { border-color: var(--line-strong); }
+  .task.imp { border-left: 3px solid var(--gold); }
+  .check {
+    width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--line-strong);
+    cursor: pointer; flex-shrink: 0; display: grid; place-items: center; transition: all .15s;
+  }
+  .check:hover { border-color: var(--accent); }
+  .task.done .check { background: var(--accent); border-color: var(--accent); }
+  .task.done .check::after { content: "✓"; font-size: 0.75rem; color: #fff; }
+  .task .ttl { flex: 1; min-width: 0; font-size: 0.92rem; word-break: break-word; }
+  .task.done .ttl { text-decoration: line-through; color: var(--faint); }
+  .task .due { font-size: 0.74rem; color: var(--muted); white-space: nowrap; }
+  .task .due.overdue { color: var(--red); font-weight: 600; }
+  .task-section-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); font-weight: 700; margin: 0.9rem 0 0.5rem; }
+  .task-section-label:first-child { margin-top: 0; }
+
+  /* ---------- MATRIX ---------- */
+  .matrix-intro { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; max-width: 720px; }
+  .inbox {
+    border: 1px dashed var(--line-strong); border-radius: 16px; padding: 0.9rem 1rem;
+    margin-bottom: 1.25rem; background: linear-gradient(var(--accent-bg-faint), var(--card)); transition: border-color .15s, background .15s;
+  }
+  .inbox.drop-hover { border-color: var(--accent); background: var(--accent-bg-faint); }
+  .inbox-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem; font-size: 0.82rem; font-weight: 800; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.05em; }
+  .inbox-cards { display: flex; gap: 0.6rem; flex-wrap: wrap; min-height: 20px; }
+  .inbox .empty-inline { font-size: 0.82rem; color: var(--faint); }
+
+  .quadrants { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 760px) { .quadrants { grid-template-columns: 1fr; } }
+  .quad {
+    border: 1px solid var(--line); border-radius: 16px; padding: 1rem; min-height: 180px;
+    background: var(--card); transition: border-color .15s, background .15s;
+    border-top: 3px solid var(--qc);
+  }
+  .quad.drop-hover { border-color: var(--qc); background: rgba(255,255,255,0.05); }
+  .quad-head { margin-bottom: 0.8rem; }
+  .quad-head .qname { display: flex; align-items: center; gap: 0.5rem; font-size: 0.98rem; font-weight: 700; }
+  .quad-head .qname .badge-q { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; font-size: 0.72rem; color: #fff; background: var(--qc); font-weight: 800; }
+  .quad-head .qsub { font-size: 0.74rem; color: var(--muted); margin-top: 0.15rem; }
+  .quad-head .qtip { font-size: 0.72rem; color: var(--gold); margin-top: 0.35rem; display: flex; align-items: center; gap: 0.3rem; }
+  .quad-cards { display: flex; flex-direction: column; gap: 0.5rem; min-height: 40px; }
+  .quad-empty { font-size: 0.78rem; color: var(--faint); padding: 0.5rem 0; text-align: center; border: 1px dashed var(--line); border-radius: 10px; }
+
+  .acard {
+    display: flex; gap: 0.55rem; align-items: flex-start; padding: 0.55rem 0.65rem;
+    border-radius: 10px; border: 1px solid var(--line); background: var(--bg-1);
+    cursor: grab; transition: border-color .15s, transform .1s, box-shadow .15s; user-select: none;
+  }
+  .acard:hover { border-color: var(--line-strong); transform: translateY(-1px); box-shadow: 0 6px 14px -8px rgba(0,0,0,0.55); }
+  .acard:active { cursor: grabbing; }
+  .acard.dragging { opacity: 0.4; }
+  .acard .kind { font-size: 0.9rem; line-height: 1.3; flex-shrink: 0; }
+  .acard .ac-body { flex: 1; min-width: 0; }
+  .acard .ac-title { font-size: 0.86rem; font-weight: 600; word-break: break-word; line-height: 1.25; }
+  .acard.done-card .ac-title { text-decoration: line-through; color: var(--faint); }
+  .acard .ac-meta { font-size: 0.7rem; color: var(--muted); margin-top: 0.15rem; display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
+  .acard .ac-meta .peak-tag { color: var(--gold); font-weight: 700; }
+  .acard .ac-meta .prog { color: var(--accent-2); font-weight: 700; }
+  /* card de entrega: identidade própria (dourado) x tarefa em andamento */
+  .acard.entrega-card { border-color: var(--accent-border); border-left: 3px solid var(--gold); background: linear-gradient(90deg, rgba(251,191,36,0.10), var(--bg-1) 62%); }
+  .acard.entrega-card .kind { filter: saturate(1.3); }
+  .acard.entrega-card .ac-meta { color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.66rem; }
+  .inbox-cards .acard { max-width: 230px; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+    padding: 0.55rem 1rem; border: 0; border-radius: 11px;
+    background: linear-gradient(135deg, var(--accent), var(--indigo));
+    color: #fff; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 10px 22px -10px var(--accent); transition: transform .1s, box-shadow .15s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 28px -10px var(--accent); }
+  .btn:active { transform: translateY(0); }
+  .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.82rem; border-radius: 9px; }
+  .btn-ghost {
+    padding: 0.55rem 1rem; border-radius: 11px; border: 1px solid var(--line);
+    background: var(--card); color: var(--txt); font-size: 0.88rem; font-weight: 500; cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-ghost:hover { background: var(--card-hover); }
+  .btn-ghost.btn-sm { padding: 0.4rem 0.75rem; font-size: 0.82rem; border-radius: 9px; }
+
+  /* ---------- MODAL ---------- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(8, 12, 24, 0.7); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; padding: 1.5rem; z-index: 100;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 440px; border: 1px solid var(--line-strong);
+    background: linear-gradient(180deg, #1e293b, #172033); border-radius: 18px; padding: 1.5rem;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .modal h3 { font-size: 1.15rem; margin-bottom: 1.1rem; letter-spacing: -0.01em; }
+  .seg { display: flex; gap: 4px; background: var(--bg-0); border: 1px solid var(--line); border-radius: 11px; padding: 4px; margin-bottom: 1.1rem; }
+  .seg button {
+    flex: 1; padding: 0.5rem; border: 0; border-radius: 8px; background: transparent;
+    color: var(--muted); font-size: 0.86rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  }
+  .seg button.active { background: linear-gradient(135deg, var(--accent), var(--indigo)); color: #fff; }
+  .field { margin-bottom: 0.9rem; }
+  .field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.35rem; font-weight: 600; }
+  .field input, .field textarea {
+    width: 100%; padding: 0.65rem 0.8rem; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--bg-0); color: var(--txt); font-size: 0.92rem; font-family: inherit; outline: none;
+    transition: border-color .15s;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 64px; }
+  .row { display: flex; gap: 0.75rem; }
+  .row .field { flex: 1; }
+  .hint { font-size: 0.72rem; color: var(--gold); margin-top: 0.4rem; display: none; }
+  .hint.show { display: block; }
+  .modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.25rem; }
+  .modal-sm { max-width: 380px; }
+
+  /* ---------- CONTEXTS ---------- */
+  .ctx-bar { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .ctx-pill {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.4rem 0.55rem 0.4rem 0.85rem; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--card); color: var(--muted);
+    font-size: 0.86rem; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+  }
+  .ctx-pill:hover { background: var(--card-hover); border-color: var(--line-strong); color: var(--txt); }
+  .ctx-pill.active { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent-2); }
+  .ctx-pill .ctx-name { line-height: 1.2; }
+  .ctx-pill:not(.active) { padding-right: 0.85rem; }
+  .ctx-pill .ctx-menu-btn {
+    font-size: 1rem; line-height: 0.6; opacity: 0.65; padding: 0.15rem 0.25rem; border-radius: 6px;
+    transition: opacity .15s, background .15s;
+  }
+  .ctx-pill .ctx-menu-btn:hover { opacity: 1; background: rgba(255,255,255,0.12); }
+  .ctx-add {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px dashed var(--line-strong);
+    background: transparent; color: var(--muted); font-size: 1.15rem; cursor: pointer;
+    display: grid; place-items: center; transition: color .15s, border-color .15s, background .15s; position: relative;
+  }
+  .ctx-add:hover { color: var(--accent-2); border-color: var(--accent); background: var(--accent-bg-faint); }
+  .ctx-add.locked::after { content: "🔒"; position: absolute; top: -7px; right: -7px; font-size: 0.62rem; }
+
+  .ctx-danger { margin-top: -0.2rem; margin-bottom: 0.2rem; }
+  .ctx-delete-btn { background: none; border: 0; color: var(--red); font-size: 0.8rem; cursor: pointer; padding: 0.2rem 0; font-weight: 600; }
+  .ctx-delete-btn:hover { text-decoration: underline; }
+
+  .upsell-badge { display: inline-block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; color: #1e1402; background: var(--gold); padding: 0.15rem 0.55rem; border-radius: 999px; margin-bottom: 0.7rem; }
+  .upsell-text { font-size: 0.88rem; color: var(--muted); margin-top: 0.3rem; line-height: 1.5; }
+
+  /* ---------- PAYWALL ---------- */
+  .pro-badge {
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.06em; color: #1e1402;
+    background: linear-gradient(135deg, var(--gold), #f59e0b); border: 0; cursor: pointer;
+    padding: 0.1rem 0.4rem; border-radius: 999px; vertical-align: middle; margin-left: 0.4rem;
+    box-shadow: 0 4px 12px -4px var(--gold);
+  }
+  .login-chip {
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent, #a855f7); background: var(--accent-bg-faint, rgba(168,85,247,0.12));
+    border: 1px solid var(--accent-border, rgba(168,85,247,0.4)); cursor: pointer;
+    padding: 0.1rem 0.5rem; border-radius: 999px; vertical-align: middle; margin-left: 0.4rem;
+  }
+  .login-chip:hover { background: var(--accent-bg, rgba(168,85,247,0.2)); }
+  .pw-msg { font-size: 0.82rem; margin-top: 0.8rem; min-height: 1em; }
+  .pw-msg.ok { color: var(--green); }
+  .pw-msg.err { color: var(--red); }
+
+  /* ---------- MOVE MENU ---------- */
+  .move-grid { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.25rem; }
+  .move-opt {
+    display: flex; align-items: center; gap: 0.6rem; text-align: left; width: 100%;
+    padding: 0.6rem 0.7rem; border-radius: 11px; border: 1px solid var(--line);
+    background: var(--card); color: var(--txt); cursor: pointer; transition: border-color .15s, background .15s;
+    border-left: 3px solid var(--qc, var(--line-strong));
+  }
+  .move-opt:hover { background: var(--card-hover); border-color: var(--line-strong); }
+  .move-opt.current { background: var(--card-hover); }
+  .move-opt .mo-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--qc, var(--faint)); flex-shrink: 0; }
+  .move-opt .mo-txt { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .move-opt .mo-txt b { font-size: 0.9rem; }
+  .move-opt .mo-txt small { font-size: 0.74rem; color: var(--muted); }
+  .move-opt .mo-now { font-size: 0.66rem; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); max-width: 520px; width: calc(100% - 40px); background: #2a1520; border: 1px solid var(--red); color: #fecaca; padding: 0.8rem 1rem; border-radius: 12px; font-size: 0.85rem; line-height: 1.4; box-shadow: 0 12px 30px -10px rgba(0,0,0,0.6); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 100; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .mark-row { display: flex; gap: 0.5rem; }
+  .mark-btn { flex: 1; padding: 0.5rem 0.6rem; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--card); color: var(--muted); font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all .12s; }
+  .mark-btn:hover { border-color: var(--accent-border); }
+  .mark-btn#evImpBtn.on, .mark-btn#tkImpBtn.on { border-color: var(--green); background: rgba(34,197,94,0.14); color: #bbf7d0; }
+  .mark-btn#evUrgBtn.on, .mark-btn#tkUrgBtn.on { border-color: var(--red); background: rgba(239,68,68,0.14); color: #fecaca; }
+  .ai-btn { margin-top: 0.9rem; width: 100%; padding: 0.55rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--muted); background: var(--card); border: 1px solid var(--line-strong); transition: all .12s; }
+  .ai-btn:hover { border-color: var(--accent-border); }
+  .ai-btn.on { color: #fff; background: var(--accent); border-color: var(--accent); }
+  .ai-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.35rem; }
+  .ac-meta .mk-ai { flex-shrink: 0; }
+  .ai-resolve-btn { width: 100%; margin-top: 0.55rem; }
+  .ai-resolve-btn[disabled] { opacity: 0.6; cursor: progress; }
+  .ai-result { max-height: 50vh; overflow-y: auto; white-space: pre-wrap; word-break: break-word; background: var(--bg-0); border: 1px solid var(--line); border-radius: 10px; padding: 0.85rem; font-size: 0.9rem; line-height: 1.5; color: var(--txt); }
+  .ai-result.loading, .ai-result.err { color: var(--muted); }
+  .ai-result.err { color: #fecaca; }
+  .ac-meta .mk { font-weight: 800; flex-shrink: 0; }
+  .ac-meta .mk-imp { color: var(--green); }
+  .ac-meta .mk-urg { color: var(--red); }
+  .ac-classify { align-self: center; flex-shrink: 0; width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--line-strong); background: var(--card); color: var(--muted); cursor: pointer; font-size: 0.9rem; line-height: 1; transition: all .12s; }
+  .ac-classify:hover { border-color: var(--accent); color: var(--accent-2); background: var(--accent-bg-faint); }
+  .move-inbox { --qc: var(--line-strong); }
+
+  /* ---------- TOPBAR / THEME ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .topbar .tabs { margin-bottom: 0; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .topbar .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { white-space: nowrap; flex-shrink: 0; }
+  .topbar-actions { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+  @media (max-width: 460px) {
+    .tabs button { padding: 0.45rem 0.7rem; font-size: 0.82rem; }
+    .tabs button .tx-ico { display: none; }
+    .tabs { gap: 2px; }
+    .topbar-actions .icon-btn { width: 32px; height: 32px; }
+  }
+  .settings-btn { font-size: 1.05rem; }
+  .icon-btn.lockable { position: relative; overflow: visible; }
+  .mini-lock { position: absolute; top: -6px; right: -6px; font-size: 0.55rem; }
+  .export-opt {
+    display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left;
+    padding: 0.8rem 0.9rem; margin-bottom: 0.6rem; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--card); color: var(--txt); cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .export-opt:hover { border-color: var(--accent); background: var(--accent-bg-faint); }
+  .export-opt .eo-ic { font-size: 1.4rem; flex-shrink: 0; }
+  .export-opt .eo-txt { display: flex; flex-direction: column; }
+  .export-opt .eo-txt b { font-size: 0.92rem; }
+  .export-opt .eo-txt small { font-size: 0.76rem; color: var(--muted); margin-top: 1px; }
+  .theme-sub { font-size: 0.85rem; color: var(--muted); margin: 0.2rem 0 1rem; line-height: 1.45; }
+  .theme-pro-badge { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.05em; color: #1e1402; background: var(--gold); padding: 0.1rem 0.4rem; border-radius: 999px; vertical-align: middle; margin-left: 0.35rem; }
+  .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .theme-sw {
+    display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.7rem; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--card); color: var(--txt); cursor: pointer;
+    font-size: 0.88rem; font-weight: 600; transition: border-color .15s, background .15s;
+  }
+  .theme-sw:hover { border-color: var(--line-strong); background: var(--card-hover); }
+  .theme-sw.active { border-color: var(--accent); }
+  .theme-sw.locked { opacity: 0.7; }
+  .sw-chip { width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 4px 10px -4px rgba(0,0,0,0.5); }
+  .sw-name { flex: 1; text-align: left; }
+  .sw-check { color: var(--accent-2); font-weight: 800; }
+  .sw-lock { font-size: 0.7rem; opacity: 0.85; }
+
+  /* ---------- REPORT ---------- */
+  .tab-lock { font-size: 0.62rem; margin-left: 0.1rem; }
+  .report-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .report-title { font-size: 1.2rem; letter-spacing: -0.01em; }
+  .report-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; max-width: 540px; }
+  .report-period { font-size: 0.78rem; color: var(--accent-2); font-weight: 600; margin-top: 0.4rem; }
+  .report-range { margin-bottom: 0; width: fit-content; }
+  .report-range button { padding: 0.45rem 0.9rem; }
+  .report-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 0.55rem; }
+  .report-date {
+    padding: 0.4rem 0.6rem; border-radius: 10px; border: 1px solid var(--line-strong);
+    background: var(--card); color: var(--txt); font-size: 0.85rem; font-family: inherit;
+    color-scheme: dark; cursor: pointer;
+  }
+  .report-date:hover { border-color: var(--accent-border); }
+  @media (max-width: 680px) { .report-controls { align-items: stretch; } }
+
+  .report-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
+  @media (max-width: 680px) { .report-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  .ring {
+    position: relative; width: 132px; height: 132px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+    background: conic-gradient(var(--gold) calc(var(--p, 0) * 1%), rgba(255,255,255,0.08) 0);
+  }
+  .ring-hole { width: 102px; height: 102px; border-radius: 50%; background: var(--bg-1); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-hole b { font-size: 1.9rem; letter-spacing: -0.02em; line-height: 1; }
+  .ring-hole span { font-size: 0.62rem; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .report-side .rs-line { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.35rem; }
+  .report-side .rs-line b { color: var(--txt); }
+  .insight { margin-top: 0.9rem; padding: 0.75rem 0.95rem; border-radius: 12px; font-size: 0.88rem; line-height: 1.45; border: 1px solid var(--line); color: var(--muted); }
+  .insight.good { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.08); color: #bbf7d0; }
+  .insight.warn { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); color: #fde68a; }
+  .insight.bad { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); color: #fecaca; }
+  .panel.suggest { margin-top: 1rem; }
+  .suggest-head { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.4rem; }
+  .suggest-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .suggest-list .sug { font-size: 0.86rem; line-height: 1.4; padding: 0.6rem 0.8rem; border-radius: 10px; background: var(--card); border-left: 3px solid var(--line-strong); }
+  .suggest-list .sug.time { border-left-color: var(--gold); }
+  .suggest-list .sug.urg { border-left-color: var(--q1); }
+  .suggest-ok { font-size: 0.86rem; color: #bbf7d0; }
+  .panel.ai-tip { border-left: 3px solid var(--accent); }
+  .ai-tip-body { font-size: 0.88rem; line-height: 1.5; color: var(--muted); white-space: pre-wrap; word-break: break-word; }
+  .ai-tip-body.loading { opacity: 0.7; font-style: italic; }
+  .ai-tip-body.err { color: #f87171; }
+  .ai-tip-btn { margin-top: 0.75rem; }
+
+  .hist-wrap { margin-top: 1.5rem; }
+  .hist-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); font-weight: 700; margin-bottom: 0.6rem; }
+  .hist { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-0); padding: 0.85rem 0.85rem 0.6rem; }
+  .hist-bars { display: flex; align-items: flex-end; gap: 3px; height: 92px; }
+  .hb-col { flex: 1; display: flex; align-items: flex-end; justify-content: center; height: 100%; }
+  .hb { width: 100%; border-radius: 4px 4px 0 0; background: var(--accent-2); min-height: 0; transition: height .25s; }
+  .hb.peak { background: var(--gold); }
+  .hist-axis { display: flex; justify-content: space-between; margin-top: 0.45rem; font-size: 0.62rem; color: var(--faint); }
+
+  .summary { display: flex; gap: 1.75rem; flex-wrap: wrap; margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
+  .summary .sm { font-size: 0.78rem; color: var(--muted); }
+  .summary .sm b { display: block; font-size: 1.35rem; color: var(--txt); letter-spacing: -0.02em; line-height: 1.2; }
+  .summary .sm.peak b { color: var(--gold); }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 8px; }
+
+  /* agendas predefinidas */
+  .ctx-preset-grid { display: grid; gap: 0.5rem; margin: 0.6rem 0 0.3rem; }
+  .ctx-preset { text-align: left; padding: 0.7rem 0.9rem; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--card); color: var(--text); font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+  .ctx-preset:hover { border-color: var(--accent); background: var(--card-hover); }
+  /* day off */
+  .dayoff-badge { position: absolute; top: 2px; right: 3px; font-size: 0.62rem; line-height: 1; }
+  #dayOffBtn.on { color: var(--gold); border-color: var(--gold); }
+  .dayoff-banner { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--gold); margin: 0 0 0.6rem; font-weight: 600; }
+  /* mensagem de bloqueio no modal de adicionar */
+  .form-msg { font-size: 0.82rem; margin-top: 0.6rem; min-height: 1em; color: #f87171; }
+  /* SOS: emergência que quebra o bloqueio do pico na agenda Pessoal */
+  .sos-btn { margin-top: 0.9rem; width: 100%; padding: 0.55rem 0.9rem; border-radius: 10px; cursor: pointer;
+    font-weight: 700; font-size: 0.85rem; color: var(--red); background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.45); transition: background .15s, border-color .15s; }
+  .sos-btn:hover { background: rgba(239,68,68,0.16); }
+  .sos-btn.on { color: #fff; background: var(--red); border-color: var(--red); }
+  .sos-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.35rem; }
+  .badge-chip.sos { color: #fff; background: var(--red); }
+  /* concluir compromisso no painel do dia */
+  .item.done { opacity: 0.55; }
+  .item.done .t { text-decoration: line-through; }
+  .item .ev-check { align-self: center; margin-right: 0.2rem; }
+  .item.done .ev-check, .day-task.done .check { background: var(--accent); border-color: var(--accent); }
+  .item.done .ev-check::after, .day-task.done .check::after { content: "✓"; font-size: 0.75rem; color: #fff; }
+  /* tarefas dentro do painel do dia */
+  .day-tasks-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.6; margin: 0.9rem 0 0.4rem; }
+  .day-task { display: flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.2rem; }
+  .day-task.done { opacity: 0.55; }
+  .day-task.done .dt-title { text-decoration: line-through; }
+  .day-task .dt-title { flex: 1; }
+  .day-task .del { background: none; border: 0; color: var(--text); opacity: 0.4; cursor: pointer; }
+  .day-task .del:hover { opacity: 1; }
+  /* matriz por data */
+  .matrix-date-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  .matrix-date-head h2 { font-size: 1.05rem; }
+  .matrix-date-head .md-sub { font-size: 0.8rem; opacity: 0.6; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">📅</div>
+      <div>
+        <h1>Agenda <button class="pro-badge" id="proBadge" style="display:none" title="Sua assinatura Pro">PRO</button><button class="login-chip" id="loginBtn" title="Entrar na sua conta">Entrar</button></h1>
+        <div class="today-str" id="todayStr"></div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="statEvents">0</b><span>compromissos hoje</span></div>
+      <div class="stat warn"><b id="statTasks">0</b><span>tarefas pendentes</span></div>
+      <div class="stat inbox"><b id="statInbox">0</b><span>a classificar</span></div>
+      <button class="btn" id="addBtn" style="align-self:stretch">+ Novo</button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div class="tabs">
+      <button data-view="agenda" class="active"><span class="tx-ico">📅</span> Agenda</button>
+      <button data-view="matrix"><span class="tx-ico">🎯</span> Matriz <span class="badge" id="tabInboxBadge" style="display:none">0</span></button>
+      <button data-view="report"><span class="tx-ico">📊</span> Relatório <span class="tab-lock" id="reportLock">🔒</span></button>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn lockable" id="exportBtn" title="Exportar">⬇<span class="mini-lock" id="exportLock">🔒</span></button>
+      <button class="icon-btn settings-btn" id="settingsBtn" title="Personalizar tema">⚙</button>
+    </div>
+  </div>
+
+  <div class="ctx-bar" id="ctxBar"></div>
+
+  <!-- =================== AGENDA VIEW =================== -->
+  <div id="viewAgenda">
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head">
+          <div class="cal-nav">
+            <button class="icon-btn" id="prevMonth">‹</button>
+            <div class="month-label" id="monthLabel"></div>
+            <button class="icon-btn" id="nextMonth">›</button>
+          </div>
+          <button class="btn-ghost btn-sm" id="todayBtn">Hoje</button>
+        </div>
+        <div class="weekdays">
+          <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
+        <div class="days" id="days"></div>
+      </section>
+
+      <section>
+        <div class="panel" style="margin-bottom:1.25rem">
+          <div class="panel-head">
+            <div>
+              <h2 id="dayTitle">Dia</h2>
+              <div class="sub" id="daySub"></div>
+            </div>
+            <div class="day-head-actions">
+              <button class="btn-ghost btn-sm" id="dayOffBtn" title="Marcar/desmarcar folga">☀️ Day off</button>
+              <button class="btn-ghost btn-sm" id="addEventBtn">+ Compromisso</button>
+            </div>
+          </div>
+
+          <div class="chrono">
+            <div class="chrono-legend">
+              <span class="lg"><span class="sw" style="background:var(--gold)"></span> Pico de energia 15h–22h</span>
+              <span class="lg"><span class="sw" style="background:var(--accent-2)"></span> Compromisso comum</span>
+            </div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+
+          <div id="dayList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Tarefas</h2>
+            <button class="btn-ghost btn-sm" id="addTaskBtn">+ Tarefa</button>
+          </div>
+          <div id="taskList"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- =================== MATRIX VIEW =================== -->
+  <div id="viewMatrix" style="display:none">
+    <div class="matrix-date-head">
+      <div>
+        <h2 id="matrixDateTitle">Matriz do dia</h2>
+        <div class="md-sub" id="matrixDateSub">Selecione um dia no calendário — cada data tem sua própria matriz.</div>
+      </div>
+    </div>
+    <p class="matrix-intro">
+      Arraste (ou toque) cada atividade para o quadrante certo. <b>Importante</b> (vermelho/verde) puxa pro seu
+      <span style="color:var(--gold)">pico de energia 15h–22h</span> — sobretudo o quadrante <b>Foco</b>, onde mora o trabalho que muda o jogo.
+    </p>
+
+    <div class="inbox" id="inbox" data-quad="none">
+      <div class="inbox-head">📥 A classificar <span id="inboxCount"></span></div>
+      <div class="inbox-cards" id="inboxCards"></div>
+    </div>
+
+    <div class="quadrants" id="quadrants"></div>
+  </div>
+
+  <!-- =================== REPORT VIEW =================== -->
+  <div id="viewReport" style="display:none">
+    <div class="report-head">
+      <div>
+        <h2 class="report-title">Aproveitamento do pico</h2>
+        <p class="report-sub">Quanto do seu trabalho importante (Fazer agora / Foco) caiu no pico de energia 15h–22h.</p>
+        <p class="report-period" id="reportPeriod"></p>
+      </div>
+      <div class="report-controls">
+        <div class="seg report-range">
+          <button data-range="1">Este dia</button>
+          <button data-range="7" class="active">Esta semana</button>
+          <button data-range="30">Últimos 30 dias</button>
+        </div>
+        <input type="date" id="reportDate" class="report-date" style="display:none">
+      </div>
+    </div>
+    <div id="reportBody"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Novo</h3>
+    <div class="seg">
+      <button data-type="event" class="active">Compromisso</button>
+      <button data-type="task">Tarefa</button>
+    </div>
+
+    <div id="formEvent">
+      <div class="field">
+        <label>Título</label>
+        <input type="text" id="evTitle" placeholder="Reunião, call, deep work...">
+      </div>
+      <div class="row">
+        <div class="field"><label>Data</label><input type="date" id="evDate"></div>
+        <div class="field">
+          <label>Hora</label><input type="time" id="evTime">
+          <div class="hint" id="peakHint">⚡ Dentro do seu pico de energia (15h–22h)</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Nota (opcional)</label>
+        <textarea id="evNote" placeholder="Detalhes, local, link..."></textarea>
+      </div>
+      <div class="field">
+        <label>Classificação (marque uma, as duas, ou nenhuma)</label>
+        <div class="mark-row">
+          <button type="button" class="mark-btn" id="evImpBtn" data-mark="imp">★ Importante</button>
+          <button type="button" class="mark-btn" id="evUrgBtn" data-mark="urg">⚡ Urgente</button>
+        </div>
+      </div>
+      <button type="button" id="evAiBtn" class="ai-btn">🤖 Delegar para Equipe/IA</button>
+      <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz — menos Eliminar — pra passar pra equipe ou mandar a IA resolver.</div>
+      <button type="button" id="evResolveBtn" class="btn ai-resolve-btn" style="display:none">🤖 Resolver com IA agora</button>
+      <button type="button" id="evSosBtn" class="sos-btn">🆘 SOS — emergência</button>
+      <div class="sos-hint">Use só pra emergência que precisa cair no pico (15h–22h) da agenda Pessoal.</div>
+    </div>
+
+    <div id="formTask" style="display:none">
+      <div class="field">
+        <label>O que precisa fazer</label>
+        <input type="text" id="tkTitle" placeholder="Comprar..., responder..., enviar...">
+      </div>
+      <div class="field">
+        <label>Início</label>
+        <input type="date" id="tkStart">
+      </div>
+      <div class="field">
+        <label>Prazo (opcional)</label>
+        <input type="date" id="tkDue">
+      </div>
+      <div class="field">
+        <label>Hora</label>
+        <input type="time" id="tkTime">
+        <div class="hint" id="tkPeakHint">⚡ Dentro do seu pico de energia (15h–22h)</div>
+      </div>
+      <div class="field">
+        <label>Classificação (marque uma, as duas, ou nenhuma)</label>
+        <div class="mark-row">
+          <button type="button" class="mark-btn" id="tkImpBtn" data-mark="imp">★ Importante</button>
+          <button type="button" class="mark-btn" id="tkUrgBtn" data-mark="urg">⚡ Urgente</button>
+        </div>
+      </div>
+      <button type="button" id="tkAiBtn" class="ai-btn">🤖 Delegar para Equipe/IA</button>
+      <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz — menos Eliminar — pra passar pra equipe ou mandar a IA resolver.</div>
+      <button type="button" id="tkResolveBtn" class="btn ai-resolve-btn" style="display:none">🤖 Resolver com IA agora</button>
+      <button type="button" id="tkSosBtn" class="sos-btn">🆘 SOS — emergência</button>
+      <div class="sos-hint">Use só pra emergência que precisa cair no pico (15h–22h) da agenda Pessoal.</div>
+    </div>
+
+    <div class="form-msg" id="formMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelBtn">Cancelar</button>
+      <button class="btn" id="saveBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONTEXTO / AGENDA -->
+<div class="overlay" id="ctxOverlay">
+  <div class="modal modal-sm">
+    <h3 id="ctxModalTitle">Nova agenda</h3>
+    <p class="theme-sub" id="ctxModalSub">Escolha uma agenda pra adicionar.</p>
+    <div class="ctx-preset-grid" id="ctxPresetGrid"></div>
+    <div class="ctx-danger" id="ctxDanger" style="display:none">
+      <button class="ctx-delete-btn" id="ctxDeleteBtn">🗑 Excluir esta agenda</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="ctxCancel">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PAYWALL -->
+<div class="overlay" id="paywallOverlay">
+  <div class="modal modal-sm">
+    <div class="upsell-badge">⚡ PRO</div>
+    <h3>Agenda Pro</h3>
+
+    <!-- estado A: não logado -> login/cadastro -->
+    <div id="pwLogin">
+      <p class="theme-sub" id="pwLoginSub">Entre na sua conta para desbloquear o Pro: múltiplos contextos, histórico ilimitado, relatório do pico, temas e export.</p>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="pwEmail" placeholder="voce@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="pwPass" placeholder="mínimo 6 caracteres" autocomplete="current-password">
+      </div>
+      <button class="btn" id="pwAuthBtn" style="width:100%;margin-top:0.5rem">Entrar</button>
+      <button class="btn-ghost" id="pwToggleMode" style="width:100%;margin-top:0.5rem">Não tem conta? Criar conta</button>
+    </div>
+
+    <!-- estado B: logado, mas sem Pro -->
+    <div id="pwNoPro" style="display:none">
+      <p class="theme-sub">Você está logado como <b id="pwUserEmail"></b>, mas sua conta ainda não tem o Pro liberado. A cobrança automática chega em breve — por enquanto o Pro é liberado manualmente. Me chama pra ativar.</p>
+      <button class="ctx-delete-btn" id="pwSignOut">Sair da conta</button>
+    </div>
+
+    <!-- estado C: logado e Pro ativo -->
+    <div id="pwActive" style="display:none">
+      <p class="theme-sub">✅ Pro <b>ativo</b> na conta <b id="pwUserEmail2"></b>. Obrigado por apoiar o app.</p>
+      <button class="ctx-delete-btn" id="pwSignOut2">Sair da conta</button>
+    </div>
+
+    <div class="pw-msg" id="pwMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="pwClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MOVER (classificar por tap) -->
+<div class="overlay" id="moveOverlay">
+  <div class="modal modal-sm">
+    <h3>Mover para</h3>
+    <p class="theme-sub" id="moveItemTitle"></p>
+    <div class="move-grid" id="moveGrid"></div>
+    <div class="form-msg" id="moveMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="moveClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- MODAL EXPORT -->
+<div class="overlay" id="exportOverlay">
+  <div class="modal modal-sm">
+    <h3>Exportar <span class="theme-pro-badge">⚡ PRO</span></h3>
+    <p class="theme-sub">Exporta o contexto <b id="exportCtxName">Pessoal</b> (compromissos e tarefas).</p>
+    <button class="export-opt" id="exportIcs">
+      <span class="eo-ic">📅</span>
+      <span class="eo-txt"><b>Calendário (.ics)</b><small>Importe no Google, Apple ou Outlook</small></span>
+    </button>
+    <button class="export-opt" id="exportPdf">
+      <span class="eo-ic">🖨️</span>
+      <span class="eo-txt"><b>PDF / Imprimir</b><small>Salve como PDF na janela de impressão</small></span>
+    </button>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="exportClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- (config de chave removida: a IA agora roda no servidor, liberada para assinantes Pro) -->
+
+<!-- MODAL RESULTADO IA -->
+<div class="overlay" id="aiResultOverlay">
+  <div class="modal">
+    <h3>🤖 Resultado da IA</h3>
+    <p class="theme-sub" id="aiResultTitle"></p>
+    <div class="ai-result" id="aiResultBody"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="aiResultClose">Fechar</button>
+      <button class="btn-ghost" id="aiResultCopy">Copiar</button>
+      <button class="btn" id="aiResultDone" style="display:none">Concluir tarefa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TEMA -->
+<div class="overlay" id="themeOverlay">
+  <div class="modal modal-sm">
+    <h3>Tema <span class="theme-pro-badge">⚡ PRO</span></h3>
+    <p class="theme-sub">Escolha a vibe do app. As cores de significado (pico, matriz) não mudam.</p>
+    <div class="theme-grid" id="themeGrid"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="themeClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL UPSELL (placeholder até o paywall) -->
+<div class="overlay" id="upsellOverlay">
+  <div class="modal modal-sm">
+    <div class="upsell-badge">⚡ PRO</div>
+    <h3 id="upsellTitle">Múltiplos contextos</h3>
+    <p class="upsell-text" id="upsellText">Separe Pessoal, cada negócio e cada projeto em agendas e matrizes independentes. No plano grátis você tem 1 contexto.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="upsellClose">Agora não</button>
+      <button class="btn" id="upsellCta">Desbloquear Pro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const KEY = "agenda.v3";
+  const OLD_KEYS = ["agenda.v2", "agenda.v1"];
+  const $ = (s) => document.querySelector(s);
+
+  // ---------- eisenhower config ----------
+  const PEAK_START = 15 * 60, PEAK_END = 22 * 60;   // minutos
+  const TL_START = 6 * 60, TL_END = 23 * 60;         // janela da timeline
+  const QUAD = {
+    q1: { name: "Fazer agora", tag: "1", sub: "Urgente + Importante", color: "var(--q1)", important: true, tip: "Crítico — encaixe no pico se exigir cabeça" },
+    q2: { name: "Foco / Agendar", tag: "2", sub: "Importante + Não urgente", color: "var(--q2)", important: true, tip: "Onde mora o que muda o jogo — proteja o pico 15h–22h" },
+    q3: { name: "Delegar", tag: "3", sub: "Urgente + Não importante", color: "var(--q3)", important: false, tip: "" },
+    q4: { name: "Eliminar", tag: "4", sub: "Nem urgente nem importante", color: "var(--q4)", important: false, tip: "" }
+  };
+  const QORDER = ["q1", "q2", "q3", "q4"];
+  // duas marcações de Eisenhower (um clique cada): Importante (impacto) e Urgente (tempo).
+  // definem os quadrantes permitidos na matriz. Prazo <=2 dias conta como urgente.
+  function markImp(item) { return !!(item && item.imp); }
+  function markUrg(item) { return !!(item && item.urg); }
+  function markAI(item) { return !!(item && item.ai); } // "delegar para Equipe/IA": quebra as barreiras da Matriz
+  function effUrg(item) { return markUrg(item) || (item && item.due && !item.entrega && daysUntil(item.due) <= 2); }
+  // quadrantes permitidos por (importante, urgente-efetivo):
+  //  imp+urg -> só q1 | imp -> q1,q2 | urg -> q1,q3 | nenhum -> só q4
+  // "Delegar para Equipe/IA" quebra TODAS as barreiras: aceita em qualquer quadrante MENOS Eliminar (q4).
+  function allowedQuads(item) {
+    if (markAI(item)) return ["q1", "q2", "q3"]; // delegado vai pra onde precisar — só não se descarta
+    const i = markImp(item), u = effUrg(item);
+    if (i && u) return ["q1"];
+    if (i) return ["q1", "q2"];
+    if (u) return ["q1", "q3"];
+    return ["q4"];
+  }
+
+  // ---------- state ----------
+  let store = load();
+  let viewMonth = new Date(); viewMonth.setDate(1);
+  let selected = iso(new Date());
+  let formType = "event";
+  let sosFlag = false; // toggle SOS (emergência), compartilhado pelos forms de compromisso e tarefa
+  let impMark = false, urgMark = false; // marcações Importante/Urgente do form aberto
+  let aiMark = false; // toggle "delegar para IA" do form aberto
+  let lastAiResult = ""; // último texto gerado (pra copiar)
+  let lastAiCtx = null;   // { kind, id } do item resolvido, pra "concluir"
+  let aiTip = { sig: "", text: "", loading: false, err: "" }; // dica de IA do Relatório (cache por assinatura do período)
+  let editing = null; // {id, kind} quando o modal está editando um item existente
+  let currentView = "agenda";
+  let drag = null; // { id, kind }
+  let reportRange = 7; // dias do relatório
+
+  // store v3: { contexts:[{id,name}], active:id, data:{ [id]:{events:[],tasks:[]} } }
+  function freshStore() {
+    const id = uid();
+    return { contexts: [{ id, name: "Pessoal" }], active: id, data: { [id]: { events: [], tasks: [] } }, daysOff: [] };
+  }
+  function migrateFlat(flat) {
+    const id = uid();
+    return { contexts: [{ id, name: "Pessoal" }], active: id, data: { [id]: { events: flat.events || [], tasks: flat.tasks || [] } }, daysOff: [] };
+  }
+  function normalize(s) {
+    if (!s || !Array.isArray(s.contexts) || !s.contexts.length) return freshStore();
+    s.data = s.data || {};
+    s.contexts.forEach(c => { if (!s.data[c.id]) s.data[c.id] = { events: [], tasks: [] }; });
+    if (!s.contexts.some(c => c.id === s.active)) s.active = s.contexts[0].id;
+    s.daysOff = Array.isArray(s.daysOff) ? s.daysOff : []; // day off é global (vale pra todas as agendas)
+    // backfill: tarefa agora tem `start` (dia que se inicia). Legado sem start herda o due
+    // (start===due => sem "entrega" separada, comportamento antigo preservado).
+    s.contexts.forEach(c => {
+      const d = s.data[c.id];
+      if (d && Array.isArray(d.tasks)) d.tasks.forEach(t => { if (t.start === undefined) t.start = t.due || null; });
+      // backfill das marcações Importante/Urgente. Legado: deriva do quadrante já classificado
+      // (q1=imp+urg, q2=imp, q3=urg, q4/none=nenhum) pra não quebrar bloqueios em dados antigos.
+      const backfillMarks = (x) => {
+        if (typeof x.imp === "boolean" && typeof x.urg === "boolean") return;
+        const q = x.quad;
+        x.imp = q === "q1" || q === "q2";
+        x.urg = q === "q1" || q === "q3";
+      };
+      if (d && Array.isArray(d.tasks)) d.tasks.forEach(backfillMarks);
+      if (d && Array.isArray(d.events)) d.events.forEach(backfillMarks);
+    });
+    return s;
+  }
+  function load() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(KEY));
+      if (raw && Array.isArray(raw.contexts)) return normalize(raw);
+    } catch (e) {}
+    // migra de versões antigas (formato plano {events,tasks}) para um contexto "Pessoal"
+    for (const k of OLD_KEYS) {
+      try {
+        const old = JSON.parse(localStorage.getItem(k));
+        if (old && Array.isArray(old.events) && Array.isArray(old.tasks)) return migrateFlat(old);
+      } catch (e) {}
+    }
+    return freshStore();
+  }
+  function save() { localStorage.setItem(KEY, JSON.stringify(store)); }
+  function ctxData() { return store.data[store.active]; }
+  function activeCtx() { return store.contexts.find(c => c.id === store.active); }
+  // apaga a tarefa e, se for uma tarefa-mãe com prazo, a sua tarefa de entrega gerada.
+  function deleteTask(id) {
+    ctxData().tasks = ctxData().tasks.filter(x => x.id !== id && x.parentId !== id);
+    save(); render();
+  }
+
+  // ---------- agendas predefinidas + day off ----------
+  const CTX_PRESETS = ["Pessoal", "Estudos", "Trabalho", "Meta Principal"];
+  function isPersonalCtx() { const c = activeCtx(); return !!c && c.name === "Pessoal"; }
+  function isDayOff(ds) { return Array.isArray(store.daysOff) && store.daysOff.includes(ds); }
+  function toggleDayOff(ds) {
+    if (!Array.isArray(store.daysOff)) store.daysOff = [];
+    const i = store.daysOff.indexOf(ds);
+    if (i >= 0) store.daysOff.splice(i, 1); else store.daysOff.push(ds);
+    save(); render();
+  }
+
+  // ---------- auth + Pro via Supabase ----------
+  // A anon key é pública por design (RLS protege os dados). O Pro real vem de
+  // profiles.is_pro no servidor — não é editável pelo cliente.
+  const SUPA = {
+    url: "https://titdmrliudwjmzzumvkc.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpdGRtcmxpdWR3am16enVtdmtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMTI4NzIsImV4cCI6MjA5ODU4ODg3Mn0.RfvrOTtnkSq1qD7enKHGnfba7Lo6SBjoeDBaCwzPKWQ"
+  };
+  const sb = window.supabase.createClient(SUPA.url, SUPA.anonKey);
+
+  let authUser = null;  // user do Supabase (ou null se deslogado)
+  let authPro = false;  // profiles.is_pro do usuário logado
+
+  // o override local (?pro=1 / agenda.pro) só vale em dev: file:// ou localhost.
+  // Em produção hospedada ele é ignorado — lá o Pro vem SÓ do servidor (Supabase),
+  // senão qualquer um destravaria o Pro de graça.
+  function isLocalDev() {
+    return location.protocol === "file:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  }
+  function isPro() {
+    if (isLocalDev() && localStorage.getItem("agenda.pro") === "1") return true; // atalho de teste local
+    return authPro; // fonte de verdade: servidor
+  }
+
+  async function fetchProStatus() {
+    if (!authUser) { authPro = false; return; }
+    try {
+      const { data, error } = await sb.from("profiles").select("is_pro").eq("id", authUser.id).single();
+      authPro = !error && !!data && data.is_pro === true;
+    } catch (e) { authPro = false; }
+  }
+
+  // sincroniza estado da sessão -> UI. Chamado no boot e a cada mudança de auth.
+  async function syncAuth() {
+    const { data } = await sb.auth.getSession();
+    authUser = data.session ? data.session.user : null;
+    await fetchProStatus();
+    render();
+  }
+
+  async function signIn(email, password) {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) return { ok: false, error: friendlyAuthErr(error.message) };
+    await syncAuth();
+    return { ok: true };
+  }
+  async function signUp(email, password) {
+    const { error } = await sb.auth.signUp({ email, password });
+    if (error) return { ok: false, error: friendlyAuthErr(error.message) };
+    await syncAuth();
+    return { ok: true };
+  }
+  async function signOut() {
+    await sb.auth.signOut();
+    authUser = null; authPro = false;
+    render();
+  }
+  function friendlyAuthErr(msg) {
+    if (!msg) return "Não deu pra entrar. Tente de novo.";
+    if (/invalid login credentials/i.test(msg)) return "Email ou senha incorretos.";
+    if (/already registered|already exists/i.test(msg)) return "Esse email já tem conta. Faça login.";
+    if (/(at least|minimum).*(6|characters)|password.*6/i.test(msg)) return "A senha precisa de pelo menos 6 caracteres.";
+    if (/valid email|invalid email/i.test(msg)) return "Digite um email válido.";
+    if (/rate limit|too many/i.test(msg)) return "Muitas tentativas. Espere um pouco e tente de novo.";
+    return msg;
+  }
+
+  // temas (Pro): só trocam a marca (accent/indigo/glow). Pico e quadrantes ficam fixos.
+  const THEMES = {
+    roxo:     { name: "Roxo",     accent: "#a855f7", accent2: "#c084fc", indigo: "#6366f1" },
+    azul:     { name: "Azul",     accent: "#3b82f6", accent2: "#60a5fa", indigo: "#6366f1" },
+    turquesa: { name: "Turquesa", accent: "#14b8a6", accent2: "#2dd4bf", indigo: "#06b6d4" },
+    grafite:  { name: "Grafite",  accent: "#64748b", accent2: "#94a3b8", indigo: "#475569" }
+  };
+  function hexA(hex, a) {
+    const n = parseInt(hex.slice(1), 16);
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function currentTheme() { return localStorage.getItem("agenda.theme") || "roxo"; }
+  function applyTheme(id) {
+    const t = THEMES[id] || THEMES.roxo;
+    const r = document.documentElement.style;
+    r.setProperty("--accent", t.accent);
+    r.setProperty("--accent-2", t.accent2);
+    r.setProperty("--indigo", t.indigo);
+    r.setProperty("--glow-1", hexA(t.accent, 0.12));
+    r.setProperty("--glow-2", hexA(t.indigo, 0.10));
+    r.setProperty("--accent-bg", hexA(t.accent, 0.12));
+    r.setProperty("--accent-bg-faint", hexA(t.accent, 0.06));
+    r.setProperty("--accent-border", hexA(t.accent, 0.4));
+  }
+
+  // histórico: Free vê os últimos 30 dias; Pro vê tudo
+  const FREE_HISTORY_DAYS = 30;
+  function historyCutoff() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - FREE_HISTORY_DAYS); return iso(d); }
+  function isLockedDay(ds) { return !isPro() && ds < historyCutoff(); }
+  function prevMonthLocked() { return !isPro() && iso(new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 0)) < historyCutoff(); }
+
+  // ---------- date helpers ----------
+  function iso(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function parseISO(s) { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); }
+  const todayISO = iso(new Date());
+  const MONTHS = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const WEEKDAYS = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+  function timeToMin(t) { if (!t) return null; const [h, m] = t.split(":").map(Number); return h * 60 + m; }
+  function inPeak(t) { const m = timeToMin(t); return m !== null && m >= PEAK_START && m <= PEAK_END; }
+  // duração assumida de uma atividade COM horário: 2h se começa dentro do pico (foco 15h–22h), 1h fora.
+  function durationMin(item) { return (item && item.time && inPeak(item.time)) ? 120 : 60; }
+
+  function prettyDay(s) {
+    const d = parseISO(s);
+    if (s === todayISO) return "Hoje";
+    const t = new Date(); t.setHours(0,0,0,0);
+    const diff = Math.round((d - t) / 86400000);
+    if (diff === 1) return "Amanhã";
+    if (diff === -1) return "Ontem";
+    return WEEKDAYS[d.getDay()].replace(/^\w/, c => c.toUpperCase());
+  }
+  function prettyDateFull(s) { const d = parseISO(s); return d.getDate() + " de " + MONTHS[d.getMonth()] + " de " + d.getFullYear(); }
+  function shortDate(s) { const d = parseISO(s); return d.getDate() + "/" + (d.getMonth() + 1); }
+
+  // ---------- render ----------
+  function render() {
+    renderHeader();
+    renderContexts();
+    $("#reportLock").style.display = isPro() ? "none" : "inline";
+    $("#exportLock").style.display = isPro() ? "none" : "inline";
+    $("#proBadge").style.display = isPro() ? "inline-block" : "none";
+    $("#loginBtn").style.display = authUser ? "none" : "inline-block";
+    if (currentView === "agenda") { renderCalendar(); renderTimeline(); renderDay(); renderTasks(); }
+    else if (currentView === "matrix") { renderMatrix(); }
+    else { renderReport(); }
+  }
+
+  function inboxItems() {
+    const a = ctxData().events.filter(e => !e.quad);
+    const b = ctxData().tasks.filter(t => !t.quad && !t.done);
+    return a.length + b.length;
+  }
+
+  function renderHeader() {
+    const now = new Date();
+    $("#todayStr").textContent = WEEKDAYS[now.getDay()] + ", " + now.getDate() + " de " + MONTHS[now.getMonth()];
+    $("#statEvents").textContent = ctxData().events.filter(e => e.date === todayISO).length;
+    $("#statTasks").textContent = ctxData().tasks.filter(t => !t.done).length;
+    const ib = inboxItems();
+    $("#statInbox").textContent = ib;
+    const badge = $("#tabInboxBadge");
+    badge.textContent = ib; badge.style.display = ib ? "inline-block" : "none";
+  }
+
+  function isImportant(item) { return markImp(item); } // importância agora vem da marcação, não do quadrante
+
+  function renderCalendar() {
+    $("#monthLabel").textContent = MONTHS[viewMonth.getMonth()] + " " + viewMonth.getFullYear();
+    $("#prevMonth").classList.toggle("locked", prevMonthLocked());
+    const days = $("#days"); days.innerHTML = "";
+    const year = viewMonth.getFullYear(), month = viewMonth.getMonth();
+    const firstDow = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysPrev = new Date(year, month, 0).getDate();
+
+    const cells = [];
+    for (let i = firstDow - 1; i >= 0; i--) cells.push({ d: daysPrev - i, m: month - 1 });
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ d, m: month });
+    while (cells.length < 42) cells.push({ d: cells.length - (firstDow + daysInMonth) + 1, m: month + 1 });
+
+    cells.forEach(c => {
+      const cellDate = new Date(year, c.m, c.d);
+      const ds = iso(cellDate);
+      const muted = c.m !== month;
+      const locked = isLockedDay(ds);
+      const el = document.createElement("button");
+      el.className = "day" + (muted ? " muted" : "") + (locked ? " locked" : "") + (ds === todayISO ? " today" : "") + (ds === selected ? " selected" : "");
+      el.innerHTML = "<span>" + c.d + "</span>";
+
+      if (locked) {
+        el.title = "Histórico além de 30 dias é Pro";
+        el.addEventListener("click", () => showUpsell("history"));
+      } else {
+        if (isDayOff(ds)) { const o = document.createElement("span"); o.className = "dayoff-badge"; o.textContent = "☀️"; el.appendChild(o); }
+        const evs = ctxData().events.filter(e => e.date === ds);
+        const dots = document.createElement("div"); dots.className = "dots";
+        evs.slice(0, 3).forEach(e => { const i = document.createElement("i"); if (isImportant(e)) i.className = "imp"; dots.appendChild(i); });
+        el.appendChild(dots);
+        if (ctxData().tasks.some(t => !t.done && t.due === ds)) { const f = document.createElement("span"); f.className = "task-flag"; el.appendChild(f); }
+        // barra de intervalo: tarefa multi-dia (start<due, não entrega) desenha um trecho de Gantt no dia.
+        const span = ctxData().tasks.find(t => t.due && !t.done && !t.entrega && (t.start || t.due) < t.due && (t.start || t.due) <= ds && ds <= t.due);
+        if (span) {
+          const st = span.start || span.due;
+          const bar = document.createElement("span");
+          bar.className = "span-bar" + (ds === st ? " is-start" : "") + (ds === span.due ? " is-end" : "");
+          el.appendChild(bar);
+        }
+        el.addEventListener("click", () => { selected = ds; render(); });
+      }
+      days.appendChild(el);
+    });
+  }
+
+  function renderTimeline() {
+    const tl = $("#timeline"); tl.innerHTML = "";
+    const span = TL_END - TL_START;
+    const pct = (min) => ((min - TL_START) / span) * 100;
+
+    const zone = document.createElement("div");
+    zone.className = "peak-zone";
+    zone.style.left = pct(PEAK_START) + "%";
+    zone.style.width = (pct(PEAK_END) - pct(PEAK_START)) + "%";
+    zone.innerHTML = '<span class="peak-label">⚡ PICO</span>';
+    tl.appendChild(zone);
+
+    const hours = document.createElement("div"); hours.className = "tl-hours";
+    [6, 9, 12, 15, 18, 21].forEach(h => {
+      const s = document.createElement("span"); s.textContent = h + "h"; s.style.left = pct(h * 60) + "%"; hours.appendChild(s);
+    });
+    tl.appendChild(hours);
+
+    // barra da duração (atrás) + ponto do horário (na frente). Duração: 2h no pico, 1h fora.
+    const drawItem = (item, isTask) => {
+      const m = timeToMin(item.time); if (m < TL_START || m > TL_END) return;
+      const cls = isImportant(item) ? "imp" : "norm";
+      const dur = durationMin(item);
+      const endM = Math.min(m + dur, TL_END);
+      const block = document.createElement("div");
+      block.className = "tl-block " + cls;
+      block.style.left = pct(m) + "%";
+      block.style.width = Math.max(pct(endM) - pct(m), 0.6) + "%";
+      block.title = item.time + " · " + item.title + " (" + (dur / 60) + "h)";
+      tl.appendChild(block);
+      const d = document.createElement("div");
+      d.className = "tl-ev " + cls;
+      d.style.left = pct(m) + "%";
+      d.title = item.time + " · " + item.title + " (" + (dur / 60) + "h)";
+      tl.appendChild(d);
+    };
+    ctxData().events.filter(e => e.date === selected && e.time).forEach(e => drawItem(e, false));
+    // tarefas com hora ativas no dia: a mãe/avulsa, não a entrega derivada.
+    ctxData().tasks.filter(t => {
+      if (t.entrega || t.done || !t.time) return false;
+      const s = t.start || t.due; const e = t.due || s;
+      return s && s <= selected && selected <= e;
+    }).forEach(t => drawItem(t, true));
+  }
+
+  function renderDay() {
+    $("#dayTitle").textContent = prettyDay(selected);
+    $("#daySub").textContent = prettyDateFull(selected);
+
+    // day off (global): estado do botão
+    const off = isDayOff(selected);
+    const offBtn = $("#dayOffBtn");
+    offBtn.classList.toggle("on", off);
+    offBtn.textContent = off ? "☀️ Day off ✓" : "☀️ Day off";
+
+    const list = $("#dayList");
+    list.innerHTML = "";
+    if (off) {
+      const banner = document.createElement("div");
+      banner.className = "dayoff-banner";
+      banner.innerHTML = "☀️ Dia de folga — hoje só a agenda Pessoal aceita novos itens.";
+      list.appendChild(banner);
+    }
+
+    const evs = ctxData().events.filter(e => e.date === selected).sort((a, b) => (a.time || "99").localeCompare(b.time || "99"));
+    // no painel do dia mostramos as ENTREGAS (tarefas geradas pelo prazo, ou legado com start===due).
+    // a tarefa-mãe (start!==due) vive na matriz no dia de início, não aqui.
+    const dayTasks = ctxData().tasks.filter(t => t.due === selected && (t.entrega || t.start === t.due));
+
+    if (!evs.length && !dayTasks.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty"; empty.innerHTML = '<span class="big">🗓️</span>Nada neste dia';
+      list.appendChild(empty);
+      return;
+    }
+
+    evs.forEach(e => {
+      const imp = isImportant(e);
+      const discard = e.quad === "q4";
+      const div = document.createElement("div");
+      div.className = "item" + (imp ? " imp" : "") + (discard ? " discard" : "") + (e.done ? " done" : "");
+
+      let badges = "";
+      if (discard) {
+        badges += '<span class="badge-chip discard">🗑 Descartar</span>';
+      } else if (e.quad) {
+        const q = QUAD[e.quad];
+        badges += '<span class="badge-chip q" style="background:' + q.color + '">' + q.name + '</span>';
+      }
+      if (imp && e.time) {
+        badges += inPeak(e.time)
+          ? '<span class="badge-chip peak">⚡ no pico</span>'
+          : '<span class="badge-chip offpeak">fora do pico</span>';
+      }
+      if (e.sos) badges += '<span class="badge-chip sos">🆘 SOS</span>';
+
+      div.innerHTML =
+        '<div class="check ev-check" title="Concluir"></div>' +
+        '<div class="time">' + (e.time || "—") + '</div>' +
+        '<div class="body"><div class="t"></div>' +
+        (e.note ? '<div class="n"></div>' : '') +
+        (badges ? '<div class="badges">' + badges + '</div>' : '') +
+        '</div><button class="del" title="Excluir">✕</button>';
+      div.querySelector(".t").textContent = e.title;
+      if (e.note) div.querySelector(".n").textContent = e.note;
+      div.querySelector(".ev-check").addEventListener("click", () => { e.done = !e.done; e.doneAt = e.done ? Date.now() : null; save(); render(); });
+      div.querySelector(".del").addEventListener("click", () => { ctxData().events = ctxData().events.filter(x => x.id !== e.id); save(); render(); });
+      list.appendChild(div);
+    });
+
+    if (dayTasks.length) {
+      const lbl = document.createElement("div"); lbl.className = "day-tasks-label"; lbl.textContent = "Entregas neste dia";
+      list.appendChild(lbl);
+      dayTasks.sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1));
+      dayTasks.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "day-task" + (t.done ? " done" : "");
+        div.innerHTML = '<div class="check" title="Concluir entrega"></div><div class="dt-title"></div><button class="del" title="Excluir">✕</button>';
+        div.querySelector(".dt-title").textContent = t.title;
+        div.querySelector(".check").addEventListener("click", () => { t.done = !t.done; t.doneAt = t.done ? Date.now() : null; save(); render(); });
+        div.querySelector(".del").addEventListener("click", () => deleteTask(t.id));
+        list.appendChild(div);
+      });
+    }
+  }
+
+  function renderTasks() {
+    const list = $("#taskList");
+    const pending = ctxData().tasks.filter(t => !t.done);
+    const done = ctxData().tasks.filter(t => t.done);
+    const dueRank = (t) => t.due ? parseISO(t.due).getTime() : Infinity;
+    pending.sort((a, b) => dueRank(a) - dueRank(b));
+    done.sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+
+    if (!ctxData().tasks.length) { list.innerHTML = '<div class="empty"><span class="big">✅</span>Sem tarefas. Tudo em dia.</div>'; return; }
+    list.innerHTML = "";
+
+    function row(t) {
+      const discard = t.quad === "q4" && !t.done;
+      const div = document.createElement("div");
+      div.className = "task" + (t.done ? " done" : "") + (isImportant(t) ? " imp" : "") + (discard ? " discard" : "");
+      let dueHtml = "";
+      if (t.due) {
+        const overdue = !t.done && t.due < todayISO;
+        const label = t.due === todayISO ? "hoje" : shortDate(t.due);
+        dueHtml = '<span class="due' + (overdue ? ' overdue' : '') + '">' + (overdue ? '⚠ ' : '') + label + '</span>';
+      }
+      const discardHtml = discard ? '<span class="badge-chip discard">🗑 Descartar</span>' : '';
+      div.innerHTML = '<div class="check"></div><div class="ttl"></div>' + discardHtml + dueHtml + '<button class="del" title="Excluir">✕</button>';
+      div.querySelector(".ttl").textContent = t.title;
+      div.querySelector(".check").addEventListener("click", () => { t.done = !t.done; t.doneAt = t.done ? Date.now() : null; save(); render(); });
+      div.querySelector(".del").addEventListener("click", () => deleteTask(t.id));
+      return div;
+    }
+    if (pending.length) {
+      const lbl = document.createElement("div"); lbl.className = "task-section-label"; lbl.textContent = "Pendentes (" + pending.length + ")";
+      list.appendChild(lbl); pending.forEach(t => list.appendChild(row(t)));
+    }
+    if (done.length) {
+      const lbl = document.createElement("div"); lbl.className = "task-section-label"; lbl.textContent = "Concluídas (" + done.length + ")";
+      list.appendChild(lbl); done.forEach(t => list.appendChild(row(t)));
+    }
+  }
+
+  // ---------- matrix ----------
+  function activityCard(item, kind) {
+    const el = document.createElement("div");
+    el.className = "acard" + (kind === "task" && item.entrega ? " entrega-card" : "") + (kind === "task" && item.done ? " done-card" : "");
+    el.draggable = true;
+    el.dataset.id = item.id; el.dataset.kind = kind;
+
+    let meta = "";
+    if (kind === "event") {
+      meta = shortDate(item.date) + (item.time ? " · " + item.time : "");
+      if (isImportant(item) && item.time) meta += inPeak(item.time) ? ' · <span class="peak-tag">⚡ pico</span>' : ' · fora do pico';
+    } else if (item.entrega) {
+      meta = "entrega · " + shortDate(item.due);
+    } else if (item.due) {
+      meta = "→ entrega " + shortDate(item.due);
+      const st = item.start || item.due;
+      if (st < item.due) {
+        // progresso do trabalho multi-dia no dia que está sendo visto (selected).
+        const total = Math.round((parseISO(item.due) - parseISO(st)) / 86400000) + 1;
+        let n = Math.round((parseISO(selected) - parseISO(st)) / 86400000) + 1;
+        n = Math.max(1, Math.min(total, n));
+        meta += ' · <span class="prog">dia ' + n + " de " + total + "</span>";
+      }
+    } else {
+      meta = "sem prazo";
+    }
+    // hora da tarefa (novo): mostra o horário e, se for importante, se cai no pico.
+    if (kind === "task" && !item.done && item.time) {
+      let pref = item.time;
+      if (isImportant(item)) pref += inPeak(item.time) ? ' · <span class="peak-tag">⚡ pico</span>' : ' · fora do pico';
+      meta = pref + (meta ? " · " + meta : "");
+    }
+    if (kind === "task" && item.done) meta = "concluída";
+    const icon = kind === "event" ? "📅" : (item.entrega ? "🎯" : "✓");
+    const marks = (markImp(item) ? '<span class="mk mk-imp" title="Importante">★</span>' : "") + (markUrg(item) ? '<span class="mk mk-urg" title="Urgente">⚡</span>' : "") + (markAI(item) ? '<span class="mk mk-ai" title="Delegar para Equipe/IA">🤖</span>' : "");
+    el.innerHTML = '<span class="kind">' + icon + '</span>' +
+      '<div class="ac-body"><div class="ac-title"></div><div class="ac-meta">' + marks + meta + '</div></div>';
+    el.querySelector(".ac-title").textContent = item.title;
+
+    el.addEventListener("dragstart", (ev) => { drag = { id: item.id, kind }; el.classList.add("dragging"); ev.dataTransfer.effectAllowed = "move"; });
+    el.addEventListener("dragend", () => { el.classList.remove("dragging"); drag = null; });
+    el.addEventListener("click", () => openEditModal(item, kind));
+    const clsBtn = document.createElement("button");
+    clsBtn.className = "ac-classify"; clsBtn.title = "Classificar na matriz"; clsBtn.textContent = "⇢";
+    clsBtn.addEventListener("click", (ev) => { ev.stopPropagation(); openMoveModal(item, kind); });
+    el.appendChild(clsBtn);
+    return el;
+  }
+
+  // bloqueios da matriz pelas marcações Importante/Urgente (prazo <=2d conta como urgente).
+  function quadBlockReason(item, quad) {
+    if (allowedQuads(item).includes(quad)) return null;
+    const nm = "“" + item.title + "”";
+    const dueUrg = item.due && !item.entrega && daysUntil(item.due) <= 2 && !markUrg(item);
+    const urgTxt = dueUrg ? "urgente (prazo em ≤2 dias)" : "urgente";
+    if (quad === "q1") return "Fazer Agora é pra o que é urgente ou importante. " + nm + " não está marcada como nenhum dos dois — marque Urgente e/ou Importante primeiro.";
+    if (quad === "q2") {
+      if (!markImp(item)) return "Agendar é pra trabalho importante. " + nm + " não está marcada como Importante.";
+      return "Agendar é pra o importante NÃO urgente. " + nm + " é " + urgTxt + " — aqui perderia o prazo; o lugar é Fazer Agora.";
+    }
+    if (quad === "q3") {
+      if (markImp(item)) return "Delegar é pra o que NÃO é importante. " + nm + " está marcada como Importante — foque nela, não delegue.";
+      return "Delegar é pra o urgente (mas não importante). " + nm + " não está marcada como Urgente — ligue “🤖 Delegar para Equipe/IA” na edição pra mandar mesmo sem urgência.";
+    }
+    if (quad === "q4") {
+      if (markAI(item)) return "Eliminar não recebe o que está delegado. " + nm + " está em “🤖 Delegar para Equipe/IA” — se é pra descartar, desligue a delegação primeiro.";
+      if (markImp(item)) return "Eliminar é pra o que não importa. " + nm + " está marcada como Importante — não descarte.";
+      return "Eliminar é pra o que não é urgente. " + nm + " é " + urgTxt + " — trate antes de descartar.";
+    }
+    return null;
+  }
+  // ao editar, se as novas marcações tornam o quadrante atual proibido, tira da matriz e avisa.
+  function reconcileQuad(it) {
+    if (it.quad && !allowedQuads(it).includes(it.quad)) {
+      delete it.quad;
+      toast("“" + it.title + "” saiu da matriz: as marcações mudaram o quadrante permitido. Reclassifique.");
+    }
+  }
+  function moveItemTo(id, kind, quad) {
+    const arr = kind === "event" ? ctxData().events : ctxData().tasks;
+    const it = arr.find(x => x.id === id);
+    if (!it) return false;
+    if (quad) { const reason = quadBlockReason(it, quad); if (reason) { toast(reason); return false; } }
+    if (quad === null) delete it.quad; else it.quad = quad; // null/none -> inbox
+    save(); render();
+    return true;
+  }
+  function moveTo(quad) { if (drag) moveItemTo(drag.id, drag.kind, quad); }
+
+  let toastTimer = null;
+  function toast(msg) {
+    const t = $("#toast"); if (!t) return;
+    t.textContent = msg; t.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 4500);
+  }
+
+  // tap/clique pra classificar (funciona no toque, onde drag HTML5 não dispara)
+  let movePending = null;
+  function openMoveModal(item, kind) {
+    movePending = { id: item.id, kind };
+    $("#moveItemTitle").textContent = item.title;
+    $("#moveMsg").textContent = "";
+    const grid = $("#moveGrid"); grid.innerHTML = "";
+    const cur = item.quad || null;
+    QORDER.forEach(qid => {
+      const q = QUAD[qid];
+      const b = document.createElement("button");
+      b.className = "move-opt" + (cur === qid ? " current" : ""); b.style.setProperty("--qc", q.color);
+      b.innerHTML = '<span class="mo-dot"></span><span class="mo-txt"><b>' + q.name + '</b><small>' + q.sub + '</small></span>' + (cur === qid ? '<span class="mo-now">atual</span>' : '');
+      b.addEventListener("click", () => {
+        const reason = quadBlockReason(item, qid);
+        if (reason) { $("#moveMsg").textContent = reason; return; }
+        moveItemTo(movePending.id, movePending.kind, qid); closeMoveModal();
+      });
+      grid.appendChild(b);
+    });
+    const inb = document.createElement("button");
+    inb.className = "move-opt move-inbox" + (cur === null ? " current" : "");
+    inb.innerHTML = '<span class="mo-dot"></span><span class="mo-txt"><b>A classificar</b><small>Tirar do quadrante</small></span>' + (cur === null ? '<span class="mo-now">atual</span>' : '');
+    inb.addEventListener("click", () => { moveItemTo(movePending.id, movePending.kind, null); closeMoveModal(); });
+    grid.appendChild(inb);
+    $("#moveOverlay").classList.add("open");
+  }
+  function closeMoveModal() { $("#moveOverlay").classList.remove("open"); movePending = null; }
+
+  function makeDropzone(el, quad) {
+    el.addEventListener("dragover", (ev) => { ev.preventDefault(); el.classList.add("drop-hover"); });
+    el.addEventListener("dragleave", () => el.classList.remove("drop-hover"));
+    el.addEventListener("drop", (ev) => { ev.preventDefault(); el.classList.remove("drop-hover"); moveTo(quad); });
+  }
+
+  function renderMatrix() {
+    // matriz POR DATA: só as atividades do dia selecionado.
+    // tarefas SEM prazo são onipresentes (aparecem em qualquer dia) pra poderem ser classificadas.
+    // tarefas COM prazo ocupam TODOS os dias do intervalo início→prazo (inclusive): trabalho
+    // que dura vários dias aparece em cada um deles. A "Entrega — <nome>" (start===due) some
+    // no seu único dia. Datas ISO YYYY-MM-DD comparam corretamente por ordem lexicográfica.
+    $("#matrixDateTitle").textContent = "Matriz — " + prettyDay(selected);
+    $("#matrixDateSub").textContent = prettyDateFull(selected) + (isDayOff(selected) ? " · ☀️ day off" : "");
+
+    const evOfDay = ctxData().events.filter(e => e.date === selected);
+    const tkOfDay = ctxData().tasks.filter(t => {
+      if (!t.due) return true;
+      const st = t.start || t.due;
+      return selected >= st && selected <= t.due;
+    });
+
+    // inbox
+    const inboxCards = $("#inboxCards"); inboxCards.innerHTML = "";
+    const inboxList = [
+      ...evOfDay.filter(e => !e.quad).map(e => ["event", e]),
+      ...tkOfDay.filter(t => !t.quad && !t.done).map(t => ["task", t])
+    ];
+    $("#inboxCount").textContent = inboxList.length ? "(" + inboxList.length + ")" : "";
+    if (!inboxList.length) inboxCards.innerHTML = '<span class="empty-inline">Nada pra classificar neste dia.</span>';
+    else inboxList.forEach(([k, it]) => inboxCards.appendChild(activityCard(it, k)));
+
+    // quadrants
+    const wrap = $("#quadrants"); wrap.innerHTML = "";
+    QORDER.forEach(qid => {
+      const q = QUAD[qid];
+      const box = document.createElement("div");
+      box.className = "quad"; box.style.setProperty("--qc", q.color);
+      box.innerHTML =
+        '<div class="quad-head">' +
+          '<div class="qname"><span class="badge-q">' + q.tag + '</span>' + q.name + '</div>' +
+          '<div class="qsub">' + q.sub + '</div>' +
+          (q.tip ? '<div class="qtip">⚡ ' + q.tip + '</div>' : '') +
+        '</div><div class="quad-cards"></div>';
+      const cards = box.querySelector(".quad-cards");
+
+      const items = [
+        ...evOfDay.filter(e => e.quad === qid).map(e => ["event", e]),
+        ...tkOfDay.filter(t => t.quad === qid).map(t => ["task", t])
+      ];
+      if (!items.length) cards.innerHTML = '<div class="quad-empty">Solte atividades aqui</div>';
+      else items.forEach(([k, it]) => cards.appendChild(activityCard(it, k)));
+
+      makeDropzone(box, qid);
+      wrap.appendChild(box);
+    });
+  }
+
+  // ---------- contexts ----------
+  let ctxEditing = null; // null = novo; ou o objeto do contexto sendo renomeado
+
+  function renderContexts() {
+    const bar = $("#ctxBar"); bar.innerHTML = "";
+    store.contexts.forEach(c => {
+      const pill = document.createElement("button");
+      pill.className = "ctx-pill" + (c.id === store.active ? " active" : "");
+      const name = document.createElement("span");
+      name.className = "ctx-name"; name.textContent = c.name;
+      pill.appendChild(name);
+      if (c.id === store.active) {
+        const menu = document.createElement("span");
+        menu.className = "ctx-menu-btn"; menu.textContent = "⋯"; menu.title = "Gerenciar agenda";
+        menu.addEventListener("click", (ev) => { ev.stopPropagation(); openCtxModal("manage", c); });
+        pill.appendChild(menu);
+      }
+      pill.addEventListener("click", () => { store.active = c.id; save(); render(); });
+      bar.appendChild(pill);
+    });
+    const add = document.createElement("button");
+    add.className = "ctx-add" + (isPro() ? "" : " locked");
+    add.textContent = "+"; add.title = isPro() ? "Nova agenda" : "Nova agenda (recurso Pro)";
+    add.addEventListener("click", () => {
+      if (!isPro()) { showUpsell("context"); return; }
+      openCtxModal("new");
+    });
+    bar.appendChild(add);
+  }
+
+  function renderCtxPresets() {
+    const grid = $("#ctxPresetGrid"); grid.innerHTML = "";
+    const used = new Set(store.contexts.map(c => c.name));
+    const avail = CTX_PRESETS.filter(n => !used.has(n));
+    if (!avail.length) { grid.innerHTML = '<span class="empty-inline">Todas as agendas já foram adicionadas.</span>'; return; }
+    avail.forEach(name => {
+      const b = document.createElement("button");
+      b.className = "ctx-preset"; b.textContent = name;
+      b.addEventListener("click", () => addCtxPreset(name));
+      grid.appendChild(b);
+    });
+  }
+  function addCtxPreset(name) {
+    const id = uid();
+    store.contexts.push({ id, name });
+    store.data[id] = { events: [], tasks: [] };
+    store.active = id;
+    save(); closeCtxModal(); render();
+  }
+  function openCtxModal(mode, ctx) {
+    ctxEditing = mode === "manage" ? ctx : null;
+    if (ctxEditing) {
+      $("#ctxModalTitle").textContent = ctxEditing.name;
+      $("#ctxModalSub").textContent = "Gerenciar esta agenda.";
+      $("#ctxPresetGrid").style.display = "none";
+      // Pessoal é a agenda base — não pode ser excluída (a regra do pico depende dela)
+      $("#ctxDanger").style.display = (store.contexts.length > 1 && ctxEditing.name !== "Pessoal") ? "" : "none";
+    } else {
+      $("#ctxModalTitle").textContent = "Nova agenda";
+      $("#ctxModalSub").textContent = "Escolha uma agenda pra adicionar.";
+      $("#ctxPresetGrid").style.display = "";
+      renderCtxPresets();
+      $("#ctxDanger").style.display = "none";
+    }
+    $("#ctxOverlay").classList.add("open");
+  }
+  function closeCtxModal() { $("#ctxOverlay").classList.remove("open"); ctxEditing = null; }
+  function deleteCtx() {
+    if (!ctxEditing || store.contexts.length <= 1 || ctxEditing.name === "Pessoal") return;
+    const it = ctxEditing;
+    if (!confirm('Excluir a agenda "' + it.name + '" e TODAS as suas atividades? Não dá pra desfazer.')) return;
+    store.contexts = store.contexts.filter(c => c.id !== it.id);
+    delete store.data[it.id];
+    if (store.active === it.id) store.active = store.contexts[0].id;
+    save(); closeCtxModal(); render();
+  }
+  const UPSELL = {
+    context: { title: "Múltiplos contextos", text: "Separe Pessoal, cada negócio e cada projeto em agendas e matrizes independentes. No plano grátis você tem 1 contexto." },
+    history: { title: "Histórico ilimitado", text: "No plano grátis você acessa os últimos 30 dias. Com o Pro, todo o seu histórico fica disponível — sem limite de tempo." },
+    report: { title: "Relatório cronobiológico", text: "Veja toda semana quanto do seu trabalho importante caiu no pico 15h–22h, com insight acionável e distribuição por horário. Disponível no Pro." },
+    theme: { title: "Temas", text: "Troque a paleta do app entre várias vibes. No plano grátis você fica no tema Roxo padrão." },
+    export: { title: "Exportar agenda", text: "Leve seus compromissos pro Google, Apple ou Outlook (.ics) ou gere um PDF da sua agenda. Disponível no Pro." },
+    ai: { title: "Resolver com IA", text: "Delegue tarefas para a IA: ela redige o texto pronto ou monta o passo-a-passo pra você resolver na hora. Disponível no Pro." }
+  };
+  function showUpsell(key) {
+    const u = UPSELL[key] || UPSELL.context;
+    $("#upsellTitle").textContent = u.title;
+    $("#upsellText").textContent = u.text;
+    $("#upsellOverlay").classList.add("open");
+  }
+
+  let pwMode = "signin"; // "signin" | "signup"
+  function setAuthMode(mode) {
+    pwMode = mode;
+    $("#pwAuthBtn").textContent = mode === "signin" ? "Entrar" : "Criar conta";
+    $("#pwToggleMode").textContent = mode === "signin" ? "Não tem conta? Criar conta" : "Já tem conta? Entrar";
+    $("#pwLoginSub").textContent = (mode === "signin" ? "Entre na sua conta" : "Crie sua conta")
+      + " para desbloquear o Pro: múltiplos contextos, histórico ilimitado, relatório do pico, temas e export.";
+  }
+  function openPaywall() {
+    $("#upsellOverlay").classList.remove("open");
+    const logged = !!authUser, pro = isPro();
+    $("#pwLogin").style.display = logged ? "none" : "";
+    $("#pwNoPro").style.display = (logged && !pro) ? "" : "none";
+    $("#pwActive").style.display = (logged && pro) ? "" : "none";
+    if (logged) { $("#pwUserEmail").textContent = authUser.email; $("#pwUserEmail2").textContent = authUser.email; }
+    else { setAuthMode("signin"); $("#pwPass").value = ""; }
+    $("#pwMsg").textContent = ""; $("#pwMsg").className = "pw-msg";
+    $("#paywallOverlay").classList.add("open");
+  }
+  function closePaywall() { $("#paywallOverlay").classList.remove("open"); }
+  async function pwAuth() {
+    const email = $("#pwEmail").value.trim(), pass = $("#pwPass").value;
+    if (!email) { $("#pwEmail").focus(); return; }
+    if (!pass) { $("#pwPass").focus(); return; }
+    const btn = $("#pwAuthBtn"); const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = pwMode === "signin" ? "Entrando..." : "Criando...";
+    $("#pwMsg").textContent = ""; $("#pwMsg").className = "pw-msg";
+    try {
+      const r = pwMode === "signin" ? await signIn(email, pass) : await signUp(email, pass);
+      if (r.ok) {
+        openPaywall(); // re-renderiza pro estado logado (com ou sem Pro)
+        if (isPro()) { $("#pwMsg").textContent = "Pro ativo. Aproveite!"; $("#pwMsg").className = "pw-msg ok"; setTimeout(closePaywall, 900); }
+        else { $("#pwMsg").textContent = "Conta pronta. O Pro ainda não está liberado nela."; $("#pwMsg").className = "pw-msg ok"; }
+      } else {
+        $("#pwMsg").textContent = r.error; $("#pwMsg").className = "pw-msg err";
+      }
+    } catch (e) {
+      $("#pwMsg").textContent = "Falha de conexão. Tente de novo."; $("#pwMsg").className = "pw-msg err";
+    }
+    btn.disabled = false; btn.textContent = orig;
+  }
+  async function pwSignOut() { await signOut(); closePaywall(); }
+
+  // ---------- temas ----------
+  function openThemeModal() { renderThemes(); $("#themeOverlay").classList.add("open"); }
+  function closeThemeModal() { $("#themeOverlay").classList.remove("open"); }
+
+  // ---------- IA (delegar para IA) ----------
+  function fallbackCopy(text, cb) {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+      cb && cb();
+    } catch (e) { toast("Não deu pra copiar — selecione o texto manualmente."); }
+  }
+
+  // chamada isolada à Edge Function 'resolve-ai' do Supabase (proxy da IA).
+  // a chave do Gemini vive NO SERVIDOR; o cliente só manda a tarefa + o token da sessão do usuário.
+  // a function valida o token e o profiles.is_pro antes de chamar o Gemini.
+  // pra trocar de modelo/provedor depois, muda-se SÓ a Edge Function — o cliente não muda.
+  async function callAI(title, note) {
+    const { data: sess } = await sb.auth.getSession();
+    const token = sess && sess.session ? sess.session.access_token : "";
+    if (!token) throw new Error("Faça login para usar a IA.");
+    const res = await fetch(SUPA.url + "/functions/v1/resolve-ai", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "apikey": SUPA.anonKey,
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ title: title, note: note || "" })
+    });
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok) throw new Error((data && data.error) ? data.error : ("Erro " + res.status));
+    const text = (data && data.text ? String(data.text) : "").trim();
+    return text || "(a IA não retornou texto)";
+  }
+
+  // modo "tip": manda o resumo do período pra IA e recebe uma dica de gestão do tempo.
+  async function callAITip(summary) {
+    const { data: sess } = await sb.auth.getSession();
+    const token = sess && sess.session ? sess.session.access_token : "";
+    if (!token) throw new Error("Faça login para usar a IA.");
+    const res = await fetch(SUPA.url + "/functions/v1/resolve-ai", {
+      method: "POST",
+      headers: { "content-type": "application/json", "apikey": SUPA.anonKey, "Authorization": "Bearer " + token },
+      body: JSON.stringify({ mode: "tip", summary: summary })
+    });
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok) throw new Error((data && data.error) ? data.error : ("Erro " + res.status));
+    const text = (data && data.text ? String(data.text) : "").trim();
+    return text || "(a IA não retornou dica)";
+  }
+
+  // resumo textual do período pra IA — só dados que o app já tem, nada inventado.
+  function buildAISummary(d, sugs) {
+    const scope = reportRange === 1 ? ("dia " + prettyDateFull(selected)) : ("últimos " + reportRange + " dias (até hoje)");
+    const L = [];
+    L.push("Agenda/contexto: " + activeCtx().name + ".");
+    L.push("Período analisado: " + scope + ".");
+    L.push("Importantes: " + d.importantCount + "; com horário: " + d.timed + "; no pico 15h-22h: " + d.inPeakC + "; fora do pico: " + d.offPeakC + "; sem horário: " + d.noTime + ".");
+    if (d.pct !== null) L.push("Percentual do importante que cai no pico: " + d.pct + "%.");
+    if (d.timedItems && d.timedItems.length) {
+      const sample = d.timedItems.slice(0, 8).map(x =>
+        "- " + x.time + " " + (inPeak(x.time) ? "(pico, ~2h)" : "(fora, ~1h)") +
+        (markImp(x) ? " [importante]" : "") + (markUrg(x) ? " [urgente]" : "") + ": " + x.title);
+      L.push("Atividades com horário:\n" + sample.join("\n"));
+    }
+    L.push(sugs.length
+      ? ("Ajustes que o app já apontou (NÃO repita, complemente): " + sugs.map(s => s.text.replace(/[“”"]/g, "")).join(" | "))
+      : "O app não encontrou nenhum ajuste — a disposição das atividades está coerente. Ainda assim, entregue uma dica útil de produtividade/gestão do tempo.");
+    return L.join("\n");
+  }
+
+  async function resolveWithAI(kind) {
+    const title = (kind === "event" ? $("#evTitle").value : $("#tkTitle").value).trim();
+    if (!title) { (kind === "event" ? $("#evTitle") : $("#tkTitle")).focus(); return; }
+    if (!isPro()) { showUpsell("ai"); return; }
+    const note = kind === "event" ? $("#evNote").value : "";
+    const btn = $(kind === "event" ? "#evResolveBtn" : "#tkResolveBtn");
+    btn.disabled = true; btn.textContent = "🤖 Gerando...";
+    // guarda o item pra "concluir" — só quando editando um existente
+    lastAiCtx = (editing && editing.kind === kind) ? { kind, id: editing.id } : null;
+    $("#aiResultTitle").textContent = title;
+    const body = $("#aiResultBody"); body.className = "ai-result loading"; body.textContent = "Gerando resposta com a IA...";
+    $("#aiResultDone").style.display = (lastAiCtx && kind === "task") ? "" : "none";
+    $("#aiResultOverlay").classList.add("open");
+    try {
+      const text = await callAI(title, note);
+      lastAiResult = text; body.className = "ai-result"; body.textContent = text;
+    } catch (e) {
+      lastAiResult = "";
+      body.className = "ai-result err";
+      body.textContent = "Não deu pra gerar: " + (e && e.message ? e.message : "erro desconhecido");
+      $("#aiResultDone").style.display = "none";
+    } finally {
+      btn.disabled = false; btn.textContent = "🤖 Resolver com IA agora";
+    }
+  }
+  function renderThemes() {
+    const grid = $("#themeGrid"); grid.innerHTML = "";
+    const cur = currentTheme();
+    Object.keys(THEMES).forEach(id => {
+      const t = THEMES[id];
+      const locked = id !== "roxo" && !isPro();
+      const sw = document.createElement("button");
+      sw.className = "theme-sw" + (id === cur ? " active" : "") + (locked ? " locked" : "");
+      sw.innerHTML =
+        '<span class="sw-chip" style="background:linear-gradient(135deg,' + t.accent + ',' + t.indigo + ')"></span>' +
+        '<span class="sw-name">' + t.name + '</span>' +
+        (locked ? '<span class="sw-lock">🔒</span>' : (id === cur ? '<span class="sw-check">✓</span>' : ''));
+      sw.addEventListener("click", () => {
+        if (locked) { closeThemeModal(); showUpsell("theme"); return; }
+        localStorage.setItem("agenda.theme", id);
+        applyTheme(id); renderThemes();
+      });
+      grid.appendChild(sw);
+    });
+  }
+
+  // ---------- export (iCal / PDF) ----------
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function escapeHTML(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+  function icsEscape(s) { return (s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
+  function slug(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "contexto"; }
+  function fmtLocal(d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + "T" + pad(d.getHours()) + pad(d.getMinutes()) + "00"; }
+
+  function buildICS() {
+    const ctx = activeCtx();
+    const now = new Date();
+    const dtstamp = now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) + "T" + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + "Z";
+    const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Agenda//PT-BR//", "CALSCALE:GREGORIAN", "X-WR-CALNAME:Agenda — " + icsEscape(ctx.name)];
+    ctxData().events.forEach(e => {
+      L.push("BEGIN:VEVENT", "UID:" + e.id + "@agenda.local", "DTSTAMP:" + dtstamp);
+      if (e.time) {
+        const start = new Date(e.date + "T" + e.time);
+        const end = new Date(start.getTime() + 3600000);
+        L.push("DTSTART:" + fmtLocal(start), "DTEND:" + fmtLocal(end));
+      } else {
+        L.push("DTSTART;VALUE=DATE:" + e.date.replace(/-/g, ""));
+      }
+      L.push("SUMMARY:" + icsEscape(e.title));
+      if (e.note) L.push("DESCRIPTION:" + icsEscape(e.note));
+      if (e.quad && QUAD[e.quad]) L.push("CATEGORIES:" + icsEscape(QUAD[e.quad].name));
+      L.push("END:VEVENT");
+    });
+    ctxData().tasks.forEach(t => {
+      L.push("BEGIN:VTODO", "UID:" + t.id + "@agenda.local", "DTSTAMP:" + dtstamp);
+      if (t.due) L.push("DUE;VALUE=DATE:" + t.due.replace(/-/g, ""));
+      L.push("SUMMARY:" + icsEscape(t.title), "STATUS:" + (t.done ? "COMPLETED" : "NEEDS-ACTION"), "END:VTODO");
+    });
+    L.push("END:VCALENDAR");
+    return L.join("\r\n");
+  }
+
+  function download(filename, content, mime) {
+    const url = URL.createObjectURL(new Blob([content], { type: mime }));
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function exportICS() {
+    download("agenda-" + slug(activeCtx().name) + ".ics", buildICS(), "text/calendar;charset=utf-8");
+    closeExportModal();
+  }
+
+  function printHTML(ctx, evs, tasks) {
+    const byDate = {};
+    evs.forEach(e => { (byDate[e.date] = byDate[e.date] || []).push(e); });
+    const dates = Object.keys(byDate).sort();
+    let body = "";
+    dates.forEach(ds => {
+      body += "<h2>" + escapeHTML(prettyDateFull(ds)) + "</h2><ul>";
+      byDate[ds].sort((a, b) => (a.time || "99").localeCompare(b.time || "99")).forEach(e => {
+        const peak = e.time && inPeak(e.time);
+        body += '<li><span class="t">' + (e.time || "—") + "</span> " + escapeHTML(e.title) +
+          (peak ? ' <span class="pk">pico</span>' : "") + (e.note ? '<div class="n">' + escapeHTML(e.note) + "</div>" : "") + "</li>";
+      });
+      body += "</ul>";
+    });
+    if (!dates.length) body = '<p class="empty">Sem compromissos neste contexto.</p>';
+    let tk = "";
+    if (tasks.length) {
+      tk = "<h2>Tarefas pendentes</h2><ul>";
+      tasks.forEach(t => { tk += '<li>☐ ' + escapeHTML(t.title) + (t.due ? ' <span class="due">' + escapeHTML(shortDate(t.due)) + "</span>" : "") + "</li>"; });
+      tk += "</ul>";
+    }
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Agenda — ' + escapeHTML(ctx.name) + '</title><style>' +
+      '*{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#1e293b;max-width:680px;margin:0 auto;padding:32px;}' +
+      'header{border-bottom:2px solid #a855f7;padding-bottom:12px;margin-bottom:18px;}h1{margin:0;font-size:24px;letter-spacing:-.02em;}' +
+      '.ctx{font-weight:600;color:#a855f7;margin-top:2px;}.meta{font-size:12px;color:#64748b;margin-top:6px;}' +
+      'h2{font-size:14px;margin:20px 0 6px;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:4px;}' +
+      'ul{list-style:none;padding:0;margin:0;}li{padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:14px;}' +
+      '.t{display:inline-block;min-width:48px;font-weight:700;color:#7c3aed;}' +
+      '.pk{font-size:11px;background:#fbbf24;color:#1e1402;padding:1px 6px;border-radius:8px;font-weight:700;margin-left:4px;}' +
+      '.n{font-size:12px;color:#64748b;margin-left:48px;margin-top:2px;}.due{color:#64748b;font-size:12px;}.empty{color:#94a3b8;}' +
+      '@media print{body{padding:0;}}' +
+      '</style></head><body><header><h1>Agenda</h1><div class="ctx">' + escapeHTML(ctx.name) + '</div>' +
+      '<div class="meta">Gerado em ' + new Date().toLocaleDateString("pt-BR") + ' · pico de energia 15h–22h destacado</div></header>' +
+      body + tk + "</body></html>";
+  }
+  function exportPDF() {
+    const ctx = activeCtx();
+    const evs = ctxData().events.slice();
+    const tasks = ctxData().tasks.filter(t => !t.done).sort((a, b) => (a.due || "9999").localeCompare(b.due || "9999"));
+    const w = window.open("", "_blank");
+    if (!w) { alert("Permita pop-ups para gerar o PDF."); return; }
+    w.document.write(printHTML(ctx, evs, tasks));
+    w.document.close(); w.focus();
+    setTimeout(() => w.print(), 350);
+    closeExportModal();
+  }
+  function openExportModal() { $("#exportCtxName").textContent = activeCtx().name; $("#exportOverlay").classList.add("open"); }
+  function closeExportModal() { $("#exportOverlay").classList.remove("open"); }
+
+  // ---------- report (cronobiologia) ----------
+  function reportData() {
+    let startISO, endISO;
+    if (reportRange === 1) {
+      // relatório do dia: escopo no dia selecionado (o que está sendo configurado), não numa janela até hoje.
+      startISO = endISO = selected;
+    } else {
+      const end = new Date(); end.setHours(0, 0, 0, 0);
+      const start = new Date(end); start.setDate(start.getDate() - (reportRange - 1));
+      startISO = iso(start); endISO = iso(end);
+    }
+    // compromissos importantes no período + tarefas importantes ATIVAS no período
+    // (mãe/avulsa, nunca a entrega derivada nem concluída). Tarefa multi-dia conta uma vez.
+    const evImp = ctxData().events.filter(e => e.date >= startISO && e.date <= endISO && isImportant(e));
+    const tkImp = ctxData().tasks.filter(t => {
+      if (t.entrega || t.done || !isImportant(t)) return false;
+      const s = t.start || t.due; if (!s) return false;
+      const e = t.due || s;
+      return s <= endISO && e >= startISO; // intervalo início→prazo intersecta a janela
+    });
+    const important = evImp.concat(tkImp);
+    const timed = important.filter(x => x.time);
+    const inPeakItems = timed.filter(x => inPeak(x.time));
+    const offPeakItems = timed.filter(x => !inPeak(x.time));
+    const noTimeItems = important.filter(x => !x.time);
+    const buckets = {};
+    timed.forEach(x => { const h = parseInt(x.time.split(":")[0], 10); buckets[h] = (buckets[h] || 0) + 1; });
+    return {
+      importantCount: important.length, timed: timed.length, inPeakC: inPeakItems.length,
+      offPeakC: offPeakItems.length, noTime: noTimeItems.length,
+      pct: timed.length ? Math.round((inPeakItems.length / timed.length) * 100) : null,
+      buckets, offPeakItems, noTimeItems, timedItems: timed, startISO, endISO
+    };
+  }
+
+  function daysUntil(dueISO) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return Math.round((parseISO(dueISO) - today) / 86400000);
+  }
+
+  // motor de sugestões: (1) horários fora do pico / sem hora no período; (2) urgência por PRAZO.
+  // urgência ≠ importância: o prazo curto sugere subir no eixo da urgência (Foco → Fazer agora),
+  // nunca inventa importância (impacto continua sendo decisão do usuário).
+  function reportSuggestions(d) {
+    const out = [];
+    // (1) por GRAU: atividade pouco importante ocupando o pico / muito importante fora dele.
+    const inWin = (x, isTask) => {
+      if (isTask) { if (x.entrega || x.done) return false; const s = x.start || x.due; const e = x.due || s; return s && s <= d.endISO && e >= d.startISO; }
+      return x.date >= d.startISO && x.date <= d.endISO;
+    };
+    const timedAll = [];
+    ctxData().events.forEach(e => { if (e.time && inWin(e, false)) timedAll.push(e); });
+    ctxData().tasks.forEach(t => { if (t.time && inWin(t, true)) timedAll.push(t); });
+    // o pico 15h–22h é uma janela DIÁRIA com teto de 3 atividades por dia.
+    const PEAK_MAX = 3;
+    const dateOf = (x) => x.date || x.start || x.due;
+    const peakByDate = {}; // ocupação atual do pico, contada por dia
+    timedAll.forEach(x => { if (inPeak(x.time)) { const dk = dateOf(x); peakByDate[dk] = (peakByDate[dk] || 0) + 1; } });
+    timedAll.forEach(x => {
+      // dentro do pico: o que não é importante deve sair (libera o pico pro que muda o jogo).
+      if (!markImp(x) && inPeak(x.time)) {
+        out.push({ type: "time", text: "“" + escapeHTML(x.title) + "” não é importante e está no pico às " + x.time + ". Tire do pico — 15h–22h é pro que muda o jogo." });
+      // fora do pico: só sugere trazer o que é IMPORTANTE E URGENTE (junto), até lotar as 3 vagas do dia.
+      } else if (markImp(x) && markUrg(x) && !inPeak(x.time)) {
+        const dk = dateOf(x);
+        if ((peakByDate[dk] || 0) < PEAK_MAX) {
+          out.push({ type: "time", text: "“" + escapeHTML(x.title) + "” é importante e urgente e está fora do pico às " + x.time + ". Traga pro intervalo 15h–22h (máx. 3 no pico)." });
+          peakByDate[dk] = (peakByDate[dk] || 0) + 1;
+        }
+      }
+    });
+    // (2) importante sem horário: sem hora não dá pra saber se cai no pico.
+    d.noTimeItems.slice(0, 3).forEach(x => out.push({ type: "time", text: "Defina um horário pra “" + escapeHTML(x.title) + "” — sem hora não dá pra saber se cai no pico." }));
+    // (3) urgência por PRAZO (global).
+    ctxData().tasks.filter(t => !t.entrega && !t.done && t.due && t.due >= todayISO).forEach(t => {
+      const dd = daysUntil(t.due);
+      const dl = dd === 0 ? "vence hoje" : "vence em " + dd + (dd === 1 ? " dia" : " dias");
+      const nm = "“" + escapeHTML(t.title) + "”";
+      if (isImportant(t) && t.quad === "q2" && dd <= 2) out.push({ type: "urg", text: nm + " " + dl + " e está em Foco. Com o prazo colado, suba pra Fazer agora." });
+      else if (!t.quad && dd <= 7) out.push({ type: "urg", text: nm + " " + dl + " e ainda está sem classificar na Matriz." });
+      else if (t.quad === "q4" && dd <= 3) out.push({ type: "urg", text: nm + " está em Eliminar, mas " + dl + ". Revise se ainda faz sentido descartar." });
+    });
+    return out;
+  }
+
+  function renderReport() {
+    document.querySelectorAll(".report-range button").forEach(b => b.classList.toggle("active", +b.dataset.range === reportRange));
+    const periodEl = $("#reportPeriod");
+    if (periodEl) periodEl.textContent = reportRange === 1
+      ? "Dia: " + prettyDay(selected) + " · " + prettyDateFull(selected)
+      : (reportRange === 7 ? "Período: últimos 7 dias (até hoje)" : "Período: últimos 30 dias (até hoje)");
+    // seletor de data só no modo "Este dia" — troca o dia analisado sem sair do relatório.
+    const dateEl = $("#reportDate");
+    if (dateEl) {
+      dateEl.style.display = reportRange === 1 ? "" : "none";
+      if (reportRange === 1) dateEl.value = selected;
+    }
+    const scopeLabel = reportRange === 1 ? "neste dia" : "no período";
+    const d = reportData();
+    const body = $("#reportBody");
+
+    let html;
+    if (!d.importantCount) {
+      html = '<div class="panel"><div class="empty"><span class="big">🎯</span>Sem atividades importantes ' + scopeLabel + '.<br>' +
+        'Classifique compromissos e tarefas como <b>Fazer agora</b> ou <b>Foco</b> na Matriz pra acompanhar quanto do seu trabalho que muda o jogo cai no pico.</div></div>';
+    } else {
+      let insight, cls;
+      if (d.pct === null) { insight = "Suas atividades importantes estão sem horário. Defina horários pra ver quanto cai no pico."; cls = "neutral"; }
+      else if (d.pct >= 70) { insight = "Você está protegendo seu pico. Mantenha o ritmo."; cls = "good"; }
+      else if (d.pct >= 40) { insight = "Boa parte do trabalho importante está fora do pico. Tente remarcar pro intervalo 15h–22h."; cls = "warn"; }
+      else { insight = "A maior parte do que muda o jogo está fora do pico. Reorganize pra ganhar tração."; cls = "bad"; }
+
+      const pctLabel = d.pct === null ? "—" : d.pct + "%";
+      const hours = []; for (let h = 6; h <= 22; h++) hours.push(h);
+      const maxC = Math.max(1, ...hours.map(h => d.buckets[h] || 0));
+      const bars = hours.map(h => {
+        const c = d.buckets[h] || 0;
+        const peak = h >= 15 && h < 22;
+        const hpx = c ? Math.max(Math.round((c / maxC) * 100), 10) : 0;
+        return '<div class="hb-col"><div class="hb' + (peak ? " peak" : "") + '" style="height:' + hpx + '%" title="' + h + 'h: ' + c + '"></div></div>';
+      }).join("");
+
+      html =
+        '<div class="panel">' +
+          '<div class="report-grid">' +
+            '<div class="ring" style="--p:' + (d.pct || 0) + '"><div class="ring-hole"><b>' + pctLabel + '</b><span>no pico</span></div></div>' +
+            '<div class="report-side">' +
+              '<div class="rs-line"><b>' + d.timed + '</b> atividade(s) importante(s) com horário no período</div>' +
+              '<div class="rs-line"><b>' + d.inPeakC + '</b> no pico · <b>' + d.offPeakC + '</b> fora' + (d.noTime ? ' · <b>' + d.noTime + '</b> sem horário' : '') + '</div>' +
+              '<div class="insight ' + cls + '">' + insight + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="hist-wrap">' +
+            '<div class="hist-label">Distribuição dos importantes por horário</div>' +
+            '<div class="hist"><div class="hist-bars">' + bars + '</div>' +
+              '<div class="hist-axis"><span>6h</span><span>9h</span><span>12h</span><span>15h</span><span>18h</span><span>22h</span></div></div>' +
+          '</div>' +
+          '<div class="summary">' +
+            '<div class="sm"><b>' + d.importantCount + '</b>importantes</div>' +
+            '<div class="sm peak"><b>' + d.inPeakC + '</b>no pico</div>' +
+            '<div class="sm"><b>' + d.offPeakC + '</b>fora do pico</div>' +
+            '<div class="sm"><b>' + d.noTime + '</b>sem horário</div>' +
+          '</div>' +
+        '</div>';
+    }
+
+    // seção Sugestões (sempre, mesmo sem atividades importantes no período)
+    const sugs = reportSuggestions(d);
+    html += '<div class="panel suggest">' +
+      '<div class="suggest-head">💡 Sugestões de melhoria</div>' +
+      (sugs.length
+        ? '<ul class="suggest-list">' + sugs.map(s => '<li class="sug ' + s.type + '">' + s.text + '</li>').join("") + '</ul>'
+        : '<div class="suggest-ok">Nada a ajustar por aqui — horários e prazos estão coerentes.</div>') +
+      '</div>';
+
+    // dica da IA (Pro): coach de produtividade que lê o período, mesmo quando está tudo coerente.
+    if (isPro()) {
+      html += '<div class="panel suggest ai-tip" id="aiTipPanel">' +
+        '<div class="suggest-head">🤖 Dica da IA</div>' +
+        '<div class="ai-tip-body" id="aiTipBody"></div>' +
+        '<button type="button" class="btn-ghost ai-tip-btn" id="aiTipBtn">Gerar dica</button>' +
+        '</div>';
+    }
+
+    body.innerHTML = html;
+    if (isPro()) renderAITip(d, sugs, false);
+  }
+
+  // gerencia a dica da IA no Relatório: usa cache por assinatura do período; auto-gera 1x; botão força nova.
+  function renderAITip(d, sugs, force) {
+    const bodyEl = $("#aiTipBody"), btn = $("#aiTipBtn");
+    if (!bodyEl || !btn) return;
+    const sig = [store.active, reportRange, selected, d.importantCount, d.timed, d.inPeakC, d.offPeakC, d.noTime, sugs.length].join("|");
+
+    const paint = () => {
+      if (aiTip.loading) { bodyEl.className = "ai-tip-body loading"; bodyEl.textContent = "Gerando dica com a IA..."; btn.disabled = true; btn.textContent = "Gerando..."; return; }
+      btn.disabled = false; btn.textContent = aiTip.text ? "Gerar nova dica" : "Gerar dica";
+      if (aiTip.err) { bodyEl.className = "ai-tip-body err"; bodyEl.textContent = "Não deu pra gerar: " + aiTip.err; return; }
+      bodyEl.className = "ai-tip-body"; bodyEl.textContent = aiTip.text || "Toque em Gerar dica pra uma leitura de produtividade do período.";
+    };
+
+    const generate = async () => {
+      aiTip = { sig, text: "", loading: true, err: "" };
+      paint();
+      try {
+        const text = await callAITip(buildAISummary(d, sugs));
+        aiTip = { sig, text, loading: false, err: "" };
+      } catch (e) {
+        aiTip = { sig, text: "", loading: false, err: (e && e.message ? e.message : "erro desconhecido") };
+      }
+      // só repinta se o usuário ainda está no mesmo período (evita sobrescrever outra tela)
+      if ($("#aiTipBody")) renderAITip(d, sugs, false);
+    };
+
+    btn.onclick = () => generate();
+    // auto-gera na primeira vez que este período aparece (ou quando forçado); senão mostra o cache.
+    if (force || (aiTip.sig !== sig && !aiTip.loading)) { generate(); return; }
+    if (aiTip.sig !== sig) aiTip = { sig, text: "", loading: false, err: "" };
+    paint();
+  }
+
+  // ---------- views ----------
+  function setView(v) {
+    if (v === "report" && !isPro()) { showUpsell("report"); return; }
+    currentView = v;
+    document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+    $("#viewAgenda").style.display = v === "agenda" ? "" : "none";
+    $("#viewMatrix").style.display = v === "matrix" ? "" : "none";
+    $("#viewReport").style.display = v === "report" ? "" : "none";
+    render();
+  }
+
+  // ---------- modal ----------
+  function syncMarkBtns() {
+    $("#evImpBtn").classList.toggle("on", impMark); $("#tkImpBtn").classList.toggle("on", impMark);
+    $("#evUrgBtn").classList.toggle("on", urgMark); $("#tkUrgBtn").classList.toggle("on", urgMark);
+    $("#evAiBtn").classList.toggle("on", aiMark); $("#tkAiBtn").classList.toggle("on", aiMark);
+    const rd = aiMark ? "" : "none";
+    $("#evResolveBtn").style.display = rd; $("#tkResolveBtn").style.display = rd;
+  }
+  function openModal(type) {
+    editing = null;
+    setType(type);
+    document.querySelectorAll("[data-type]").forEach(b => b.disabled = false);
+    $("#evDate").value = selected; $("#evTime").value = ""; $("#evTitle").value = ""; $("#evNote").value = "";
+    $("#tkTitle").value = ""; $("#tkStart").value = selected; $("#tkDue").value = ""; $("#tkTime").value = ""; $("#peakHint").classList.remove("show"); $("#tkPeakHint").classList.remove("show");
+    sosFlag = false; $("#evSosBtn").classList.remove("on"); $("#tkSosBtn").classList.remove("on");
+    impMark = false; urgMark = false; aiMark = false; syncMarkBtns();
+    $("#formMsg").textContent = "";
+    $("#overlay").classList.add("open");
+    setTimeout(() => (type === "event" ? $("#evTitle") : $("#tkTitle")).focus(), 50);
+  }
+  // clicar no card abre esta tela de edição (mesmo modal de criação, pré-preenchido).
+  function openEditModal(item, kind) {
+    openModal(kind);
+    editing = { id: item.id, kind };
+    if (kind === "event") {
+      $("#evTitle").value = item.title; $("#evDate").value = item.date; $("#evTime").value = item.time || ""; $("#evNote").value = item.note || "";
+      $("#peakHint").classList.toggle("show", !!item.time && inPeak(item.time));
+    } else {
+      $("#tkTitle").value = item.title; $("#tkStart").value = item.start || item.due || selected; $("#tkDue").value = item.due || ""; $("#tkTime").value = item.time || "";
+      $("#tkPeakHint").classList.toggle("show", !!item.time && inPeak(item.time));
+    }
+    sosFlag = !!item.sos; $("#" + (kind === "event" ? "evSosBtn" : "tkSosBtn")).classList.toggle("on", sosFlag);
+    impMark = markImp(item); urgMark = markUrg(item); aiMark = markAI(item); syncMarkBtns();
+    document.querySelectorAll("[data-type]").forEach(b => b.disabled = b.dataset.type !== kind);
+    $("#modalTitle").textContent = kind === "event" ? "Editar compromisso" : "Editar tarefa";
+    setTimeout(() => (kind === "event" ? $("#evTitle") : $("#tkTitle")).focus(), 50);
+  }
+  function closeModal() { $("#overlay").classList.remove("open"); editing = null; }
+  function setType(type) {
+    formType = type;
+    document.querySelectorAll(".seg button[data-type]").forEach(b => b.classList.toggle("active", b.dataset.type === type));
+    $("#formEvent").style.display = type === "event" ? "" : "none";
+    $("#formTask").style.display = type === "task" ? "" : "none";
+    $("#modalTitle").textContent = type === "event" ? "Novo compromisso" : "Nova tarefa";
+    syncMarkBtns();
+  }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  function saveItem() {
+    $("#formMsg").textContent = "";
+    if (formType === "event") {
+      const title = $("#evTitle").value.trim(); if (!title) { $("#evTitle").focus(); return; }
+      const date = $("#evDate").value || selected;
+      const time = $("#evTime").value;
+      if (!time) { $("#formMsg").textContent = "Defina um horário — agora é obrigatório em todo compromisso."; $("#evTime").focus(); return; }
+      // day off: nesse dia só a agenda Pessoal aceita novos itens.
+      if (isDayOff(date) && !isPersonalCtx()) {
+        $("#formMsg").textContent = "Dia de folga (day off): nesse dia só dá pra agendar na agenda Pessoal.";
+        return;
+      }
+      // pico na Pessoal (com mais de uma agenda): reservado pro trabalho que muda o jogo.
+      // A ÚNICA quebra é a emergência (SOS) — day off não libera mais o pico.
+      if (isPersonalCtx() && store.contexts.length > 1 && time && inPeak(time) && !sosFlag) {
+        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como 🆘 SOS se for emergência.";
+        return;
+      }
+      if (editing && editing.kind === "event") {
+        const it = ctxData().events.find(x => x.id === editing.id);
+        if (it) { Object.assign(it, { title, date, time, note: $("#evNote").value.trim(), sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark }); reconcileQuad(it); }
+      } else {
+        ctxData().events.push({ id: uid(), title, date, time, note: $("#evNote").value.trim(), quad: null, done: false, doneAt: null, sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark });
+      }
+      selected = date; viewMonth = parseISO(date); viewMonth.setDate(1);
+    } else {
+      const title = $("#tkTitle").value.trim(); if (!title) { $("#tkTitle").focus(); return; }
+      const start = $("#tkStart").value || selected;
+      const due = $("#tkDue").value || null;
+      const time = $("#tkTime").value;
+      if (!time) { $("#formMsg").textContent = "Defina um horário — agora é obrigatório em toda tarefa."; $("#tkTime").focus(); return; }
+      // day off também restringe tarefas com prazo caído num dia de folga fora da Pessoal.
+      if (due && isDayOff(due) && !isPersonalCtx()) {
+        $("#formMsg").textContent = "Dia de folga (day off): nesse dia só dá pra agendar na agenda Pessoal.";
+        return;
+      }
+      // mesma regra do pico dos compromissos: na Pessoal (com +1 agenda), pico só com SOS.
+      if (isPersonalCtx() && store.contexts.length > 1 && time && inPeak(time) && !sosFlag) {
+        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como 🆘 SOS se for emergência.";
+        return;
+      }
+      if (editing && editing.kind === "task") {
+        const it = ctxData().tasks.find(x => x.id === editing.id);
+        if (it) { Object.assign(it, { title, start, due, time: time || "", sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark }); reconcileQuad(it); }
+      } else {
+        // start = dia em que a tarefa inicia (é onde ela vive na matriz).
+        const parentId = uid();
+        ctxData().tasks.push({ id: parentId, title, start, due, time: time || "", done: false, doneAt: null, quad: null, sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark });
+        // prazo depois do início gera automaticamente uma tarefa de ENTREGA no dia do prazo (herda hora e marcações).
+        if (due && due > start) {
+          ctxData().tasks.push({ id: uid(), title: "Entrega — " + title, start: due, due, time: time || "", done: false, doneAt: null, quad: null, entrega: true, parentId, sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark });
+        }
+      }
+      // leva o calendário pro dia de início, pra você ver a tarefa cair na matriz dele.
+      selected = start; viewMonth = parseISO(start); viewMonth.setDate(1);
+    }
+    save(); closeModal(); render();
+  }
+
+  // ---------- events ----------
+  $("#prevMonth").addEventListener("click", () => {
+    if (prevMonthLocked()) { showUpsell("history"); return; }
+    viewMonth.setMonth(viewMonth.getMonth() - 1); renderCalendar();
+  });
+  $("#nextMonth").addEventListener("click", () => { viewMonth.setMonth(viewMonth.getMonth() + 1); renderCalendar(); });
+  $("#todayBtn").addEventListener("click", () => { selected = todayISO; viewMonth = new Date(); viewMonth.setDate(1); render(); });
+  $("#addBtn").addEventListener("click", () => openModal("event"));
+  $("#addEventBtn").addEventListener("click", () => openModal("event"));
+  $("#addTaskBtn").addEventListener("click", () => openModal("task"));
+  $("#dayOffBtn").addEventListener("click", () => toggleDayOff(selected));
+  $("#cancelBtn").addEventListener("click", closeModal);
+  $("#saveBtn").addEventListener("click", saveItem);
+  $("#evTime").addEventListener("input", (e) => { $("#peakHint").classList.toggle("show", inPeak(e.target.value)); });
+  $("#tkTime").addEventListener("input", (e) => { $("#tkPeakHint").classList.toggle("show", inPeak(e.target.value)); });
+  $("#evSosBtn").addEventListener("click", () => { sosFlag = !sosFlag; $("#evSosBtn").classList.toggle("on", sosFlag); $("#formMsg").textContent = ""; });
+  $("#tkSosBtn").addEventListener("click", () => { sosFlag = !sosFlag; $("#tkSosBtn").classList.toggle("on", sosFlag); $("#formMsg").textContent = ""; });
+  $("#evImpBtn").addEventListener("click", () => { impMark = !impMark; syncMarkBtns(); });
+  $("#tkImpBtn").addEventListener("click", () => { impMark = !impMark; syncMarkBtns(); });
+  $("#evUrgBtn").addEventListener("click", () => { urgMark = !urgMark; syncMarkBtns(); });
+  $("#tkUrgBtn").addEventListener("click", () => { urgMark = !urgMark; syncMarkBtns(); });
+  $("#evAiBtn").addEventListener("click", () => { aiMark = !aiMark; syncMarkBtns(); });
+  $("#tkAiBtn").addEventListener("click", () => { aiMark = !aiMark; syncMarkBtns(); });
+  $("#evResolveBtn").addEventListener("click", () => resolveWithAI("event"));
+  $("#tkResolveBtn").addEventListener("click", () => resolveWithAI("task"));
+  $("#aiResultClose").addEventListener("click", () => $("#aiResultOverlay").classList.remove("open"));
+  $("#aiResultOverlay").addEventListener("click", (e) => { if (e.target === $("#aiResultOverlay")) $("#aiResultOverlay").classList.remove("open"); });
+  $("#aiResultCopy").addEventListener("click", () => {
+    if (!lastAiResult) return;
+    const ok = () => toast("Resultado copiado.");
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(lastAiResult).then(ok).catch(() => fallbackCopy(lastAiResult, ok));
+    else fallbackCopy(lastAiResult, ok);
+  });
+  $("#aiResultDone").addEventListener("click", () => {
+    if (!lastAiCtx || lastAiCtx.kind !== "task") return;
+    const it = ctxData().tasks.find(x => x.id === lastAiCtx.id);
+    if (it) { it.done = true; it.doneAt = Date.now(); save(); render(); }
+    $("#aiResultOverlay").classList.remove("open"); closeModal();
+    toast("Tarefa concluída.");
+  });
+  document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => setType(b.dataset.type)));
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
+  document.querySelectorAll(".report-range button").forEach(b => b.addEventListener("click", () => { reportRange = +b.dataset.range; renderReport(); }));
+  $("#reportDate").addEventListener("change", (e) => {
+    if (!e.target.value) return;
+    selected = e.target.value; viewMonth = parseISO(selected); viewMonth.setDate(1);
+    render();
+  });
+  $("#overlay").addEventListener("click", (e) => { if (e.target === $("#overlay")) closeModal(); });
+  // contexto
+  $("#ctxCancel").addEventListener("click", closeCtxModal);
+  $("#ctxDeleteBtn").addEventListener("click", deleteCtx);
+  $("#ctxOverlay").addEventListener("click", (e) => { if (e.target === $("#ctxOverlay")) closeCtxModal(); });
+  // mover (classificar por tap)
+  $("#moveClose").addEventListener("click", closeMoveModal);
+  $("#moveOverlay").addEventListener("click", (e) => { if (e.target === $("#moveOverlay")) closeMoveModal(); });
+  // export
+  $("#exportBtn").addEventListener("click", () => { if (!isPro()) { showUpsell("export"); return; } openExportModal(); });
+  $("#exportClose").addEventListener("click", closeExportModal);
+  $("#exportIcs").addEventListener("click", exportICS);
+  $("#exportPdf").addEventListener("click", exportPDF);
+  $("#exportOverlay").addEventListener("click", (e) => { if (e.target === $("#exportOverlay")) closeExportModal(); });
+  // tema
+  $("#settingsBtn").addEventListener("click", openThemeModal);
+  $("#themeClose").addEventListener("click", closeThemeModal);
+  $("#themeOverlay").addEventListener("click", (e) => { if (e.target === $("#themeOverlay")) closeThemeModal(); });
+  // upsell
+  $("#upsellClose").addEventListener("click", () => $("#upsellOverlay").classList.remove("open"));
+  $("#upsellCta").addEventListener("click", openPaywall);
+  $("#upsellOverlay").addEventListener("click", (e) => { if (e.target === $("#upsellOverlay")) $("#upsellOverlay").classList.remove("open"); });
+  // paywall / conta
+  $("#proBadge").addEventListener("click", openPaywall);
+  $("#loginBtn").addEventListener("click", openPaywall);
+  $("#pwClose").addEventListener("click", closePaywall);
+  $("#pwAuthBtn").addEventListener("click", pwAuth);
+  $("#pwToggleMode").addEventListener("click", () => setAuthMode(pwMode === "signin" ? "signup" : "signin"));
+  $("#pwSignOut").addEventListener("click", pwSignOut);
+  $("#pwSignOut2").addEventListener("click", pwSignOut);
+  $("#pwEmail").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $("#pwPass").focus(); } });
+  $("#pwPass").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); pwAuth(); } });
+  $("#paywallOverlay").addEventListener("click", (e) => { if (e.target === $("#paywallOverlay")) closePaywall(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeModal(); closeCtxModal(); closeThemeModal(); closeExportModal(); closeMoveModal(); closePaywall(); $("#upsellOverlay").classList.remove("open"); }
+    if (e.key === "Enter" && $("#overlay").classList.contains("open") && e.target.tagName !== "TEXTAREA") saveItem();
+  });
+  // inbox como dropzone (devolver pra "a classificar")
+  makeDropzone($("#inbox"), null);
+
+  // modo de teste do Pro via URL: ?pro=1 liga, ?pro=0 desliga (persiste no localStorage)
+  const _proParam = new URLSearchParams(location.search).get("pro");
+  if (_proParam === "1") localStorage.setItem("agenda.pro", "1");
+  else if (_proParam === "0") localStorage.removeItem("agenda.pro");
+  if (_proParam !== null) { try { history.replaceState(null, "", location.pathname); } catch (e) {} } // limpa a URL (file:// pode barrar)
+
+  // tema no boot (se Free tiver um tema Pro salvo, volta pro padrão)
+  if (!isPro() && currentTheme() !== "roxo") localStorage.setItem("agenda.theme", "roxo");
+  applyTheme(currentTheme());
+
+  // auth: sincroniza a sessão no boot e reage a login/logout/refresh (não bloqueia o boot).
+  // setTimeout evita o deadlock conhecido de chamar o SDK dentro do próprio callback.
+  sb.auth.onAuthStateChange(() => { setTimeout(syncAuth, 0); });
+  syncAuth();
+
+  render();
+})();
+</script>
+</body>
+</html>
