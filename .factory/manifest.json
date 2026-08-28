@@ -1,0 +1,99 @@
+{
+  "$schema": "./manifest.schema.json",
+  "version": 1,
+  "name": "saas-factory-template",
+  "protected": [
+    "src/factory/**",
+    "src/lib/auth.ts",
+    "src/lib/auth-client.ts",
+    "src/lib/db.ts",
+    "src/lib/schema.ts",
+    "src/lib/quack.ts",
+    "src/lib/redis.ts",
+    "src/app/api/auth/**",
+    "src/app/api/webhooks/**",
+    "src/app/api/factory/**",
+    "Dockerfile",
+    "drizzle.config.ts",
+    ".factory/**"
+  ],
+  "productRoots": [
+    "src/app/(product)",
+    "src/components/product",
+    "src/app/dashboard"
+  ],
+  "entry": {
+    "login": "/login",
+    "app": "/dashboard",
+    "paywall": "/paywall",
+    "webhook": "/api/webhooks/quack",
+    "me": "/api/factory/me",
+    "track": "/api/factory/track"
+  },
+  "imports": {
+    "access": "@/factory",
+    "requireAccess": "RequireAccess",
+    "useAccess": "useAccess",
+    "trackClient": "trackClient"
+  },
+  "stripFromExternal": {
+    "deps": [
+      "next-auth",
+      "@auth/core",
+      "@clerk/nextjs",
+      "@clerk/clerk-react",
+      "@supabase/supabase-js",
+      "@supabase/ssr",
+      "@supabase/auth-helpers-nextjs",
+      "stripe",
+      "@stripe/stripe-js",
+      "mercadopago",
+      "firebase",
+      "firebase-admin",
+      "passport",
+      "jsonwebtoken"
+    ],
+    "pathGlobs": [
+      "**/supabase/**",
+      "**/stripe/**",
+      "**/clerk/**",
+      "**/firebase/**",
+      "**/lib/supabase*",
+      "**/lib/stripe*",
+      "**/utils/supabase*",
+      "**/app/api/auth/**",
+      "**/app/api/stripe/**",
+      "**/app/api/webhook*/**",
+      "**/middleware.ts"
+    ]
+  },
+  "rewriteHints": [
+    {
+      "from": "createClient from '@supabase/supabase-js'",
+      "to": "use factory db() + better-auth; remove supabase auth"
+    },
+    {
+      "from": "stripe.checkout.sessions",
+      "to": "window.location = factoryConfig.checkoutUrl / QUACK_CHECKOUT_URL"
+    },
+    {
+      "from": "useUser() from clerk",
+      "to": "useAccess() from @/factory"
+    },
+    {
+      "from": "getServerSession",
+      "to": "getSessionAccess() from @/factory"
+    }
+  ],
+  "envRequired": [
+    "SAAS_SLUG",
+    "APP_NAME",
+    "DATABASE_URL",
+    "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL",
+    "QUACK_CHECKOUT_URL",
+    "QUACK_WEBHOOK_SECRET",
+    "FACTORY_CONTROL_URL",
+    "FACTORY_INGEST_KEY"
+  ]
+}

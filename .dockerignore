@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+drizzle/meta
+*.md
+.DS_Store
+coverage
+.turbo
