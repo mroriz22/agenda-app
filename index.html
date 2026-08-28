@@ -119,7 +119,7 @@
   }
   .icon-btn:hover { background: var(--card-hover); border-color: var(--line-strong); }
   .icon-btn.locked { opacity: 0.4; position: relative; }
-  .icon-btn.locked::after { content: "🔒"; position: absolute; top: -6px; right: -6px; font-size: 0.55rem; }
+  .icon-btn.locked::after { content: ""; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3560a' stroke-width='2.2' stroke-linecap='round'%3E%3Crect x='5' y='10.5' width='14' height='10' rx='2'/%3E%3Cpath d='M8.5 10.5V7.6a3.5 3.5 0 0 1 7 0v2.9'/%3E%3C/svg%3E") center/contain no-repeat; width: 9px; height: 9px; position: absolute; top: -5px; right: -5px; }
   .month-label { font-size: 0.98rem; font-weight: 600; min-width: 150px; text-align: center; text-transform: capitalize; }
 
   .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 6px; }
@@ -135,7 +135,7 @@
   .day.muted { color: var(--faint); opacity: 0.5; }
   .day.locked { opacity: 0.3; }
   .day.locked:hover { background: var(--accent-bg-faint); opacity: 0.55; }
-  .day.locked:hover::after { content: "🔒"; position: absolute; top: 4px; right: 5px; font-size: 0.55rem; }
+  .day.locked:hover::after { content: ""; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3560a' stroke-width='2.2' stroke-linecap='round'%3E%3Crect x='5' y='10.5' width='14' height='10' rx='2'/%3E%3Cpath d='M8.5 10.5V7.6a3.5 3.5 0 0 1 7 0v2.9'/%3E%3C/svg%3E") center/contain no-repeat; width: 9px; height: 9px; position: absolute; top: 4px; right: 5px; }
   .day.today { border-color: var(--accent); color: var(--accent-2); font-weight: 700; }
   .day.selected { background: linear-gradient(135deg, var(--accent), var(--indigo)); color: #fff; border-color: transparent; box-shadow: 0 8px 18px -8px var(--accent); }
   .day.selected.today { color: #fff; }
@@ -357,7 +357,7 @@
     display: grid; place-items: center; transition: color .15s, border-color .15s, background .15s; position: relative;
   }
   .ctx-add:hover { color: var(--accent-2); border-color: var(--accent); background: var(--accent-bg-faint); }
-  .ctx-add.locked::after { content: "🔒"; position: absolute; top: -7px; right: -7px; font-size: 0.62rem; }
+  .ctx-add.locked::after { content: ""; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3560a' stroke-width='2.2' stroke-linecap='round'%3E%3Crect x='5' y='10.5' width='14' height='10' rx='2'/%3E%3Cpath d='M8.5 10.5V7.6a3.5 3.5 0 0 1 7 0v2.9'/%3E%3C/svg%3E") center/contain no-repeat; width: 10px; height: 10px; position: absolute; top: -6px; right: -6px; }
 
   .ctx-danger { margin-top: -0.2rem; margin-bottom: 0.2rem; }
   .ctx-delete-btn { background: none; border: 0; color: var(--red); font-size: 0.8rem; cursor: pointer; padding: 0.2rem 0; font-weight: 600; }
@@ -366,6 +366,12 @@
   .upsell-badge { display: inline-block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; color: #1e1402; background: var(--gold); padding: 0.15rem 0.55rem; border-radius: 999px; margin-bottom: 0.7rem; }
   .upsell-text { font-size: 0.88rem; color: var(--muted); margin-top: 0.3rem; line-height: 1.5; }
 
+
+  /* ---------- ícones de linha (substituem os emojis) ---------- */
+  .ico { width: 1.05em; height: 1.05em; flex: 0 0 auto; display: inline-block; vertical-align: -0.16em;
+         fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .ico.filled { fill: currentColor; stroke: none; }
+  .ico-lg { width: 1.9rem; height: 1.9rem; stroke-width: 1.4; opacity: 0.55; display: block; margin: 0 auto 0.5rem; }
   /* ---------- PAYWALL ---------- */
   .pro-badge {
     font-size: 0.6rem; font-weight: 800; letter-spacing: 0.06em; color: #1e1402;
@@ -644,6 +650,28 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V5M16 20v-7M22 20H2"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V7.6a3.5 3.5 0 0 1 7 0v2.9"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M4.5 20h15"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.2v2.4M12 18.4v2.4M20.8 12h-2.4M5.6 12H3.2M18.2 5.8l-1.7 1.7M7.5 16.5l-1.7 1.7M18.2 18.2l-1.7-1.7M7.5 7.5 5.8 5.8"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6 17 17M7 7 5.4 5.4"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3.5 13.5h4l1.5 3h6l1.5-3h4"/><path d="M5.6 4.5h12.8l2.1 9v4a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-4z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.75L12 16.9l-5.2 2.7 1-5.75-4.2-4.1 5.8-.85z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.5 4.8 13.6h5.6l-.6 7.9 8.4-11.1h-5.6z"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M10.2 1.8l2.3 6.1 6.1 2.3-6.1 2.3-2.3 6.1-2.3-6.1L1.8 10.2l6.1-2.3zM18.6 14.4l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z"/></symbol>
+<symbol id="i-sos" viewBox="0 0 24 24"><path d="M12 3.6 21 19.4H3z"/><path d="M12 9.6v4.2M12 16.8v.1"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.8h15M9.5 6.8V4.6h5v2.2M6.6 6.8l.9 12.6h9l.9-12.6M10.2 10.4v5.6M13.8 10.4v5.6"/></symbol>
+<symbol id="i-printer" viewBox="0 0 24 24"><path d="M7 9V3.8h10V9M7 18.5H5a1.8 1.8 0 0 1-1.8-1.8v-4.9A1.8 1.8 0 0 1 5 10h14a1.8 1.8 0 0 1 1.8 1.8v4.9A1.8 1.8 0 0 1 19 18.5h-2"/><rect x="7" y="15" width="10" height="5.4" rx="1"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7.2 18.5h9.9a3.9 3.9 0 0 0 .5-7.8 5.6 5.6 0 0 0-10.8-1.2 4.5 4.5 0 0 0 .4 9z"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6v5M12 15.8v.1"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.4 18h5.2M10.2 21h3.6"/><path d="M12 3.2a5.8 5.8 0 0 0-3.4 10.5c.6.5 1 1.2 1 2h4.8c0-.8.4-1.5 1-2A5.8 5.8 0 0 0 12 3.2z"/></symbol>
+<symbol id="i-empty-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9.5 15.5h5"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.4 12.2l2.6 2.6 4.6-5.2"/></symbol>
+</defs></svg>
 <div class="wrap">
   <header>
     <div class="brand">
@@ -663,13 +691,13 @@
 
   <div class="topbar">
     <div class="tabs">
-      <button data-view="agenda" class="active"><span class="tx-ico">📅</span> Agenda</button>
-      <button data-view="matrix"><span class="tx-ico">🎯</span> Matriz <span class="badge" id="tabInboxBadge" style="display:none">0</span></button>
-      <button data-view="report"><span class="tx-ico">📊</span> Relatório <span class="tab-lock" id="reportLock">🔒</span></button>
+      <button data-view="agenda" class="active"><span class="tx-ico"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg></span> Agenda</button>
+      <button data-view="matrix"><span class="tx-ico"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg></span> Matriz <span class="badge" id="tabInboxBadge" style="display:none">0</span></button>
+      <button data-view="report"><span class="tx-ico"><svg class="ico" aria-hidden="true"><use href="#i-chart"/></svg></span> Relatório <span class="tab-lock" id="reportLock"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span></button>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn lockable" id="exportBtn" title="Exportar">⬇<span class="mini-lock" id="exportLock">🔒</span></button>
-      <button class="icon-btn settings-btn" id="settingsBtn" title="Personalizar tema">⚙</button>
+      <button class="icon-btn lockable" id="exportBtn" title="Exportar"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span class="mini-lock" id="exportLock"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span></button>
+      <button class="icon-btn settings-btn" id="settingsBtn" title="Personalizar tema"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg></button>
     </div>
   </div>
 
@@ -701,7 +729,7 @@
               <div class="sub" id="daySub"></div>
             </div>
             <div class="day-head-actions">
-              <button class="btn-ghost btn-sm" id="dayOffBtn" title="Marcar/desmarcar folga">☀️ Day off</button>
+              <button class="btn-ghost btn-sm" id="dayOffBtn" title="Marcar/desmarcar folga"><svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg> Day off</button>
               <button class="btn-ghost btn-sm" id="addEventBtn">+ Compromisso</button>
             </div>
           </div>
@@ -742,7 +770,7 @@
     </p>
 
     <div class="inbox" id="inbox" data-quad="none">
-      <div class="inbox-head">📥 A classificar <span id="inboxCount"></span></div>
+      <div class="inbox-head"><svg class="ico" aria-hidden="true"><use href="#i-inbox"/></svg> A classificar <span id="inboxCount"></span></div>
       <div class="inbox-cards" id="inboxCards"></div>
     </div>
 
@@ -788,7 +816,7 @@
         <div class="field"><label>Data</label><input type="date" id="evDate"></div>
         <div class="field">
           <label>Hora</label><input type="time" id="evTime">
-          <div class="hint" id="peakHint">⚡ Dentro do seu pico de energia (15h–22h)</div>
+          <div class="hint" id="peakHint"><svg class="ico" aria-hidden="true"><use href="#i-bolt"/></svg> Dentro do seu pico de energia (15h–22h)</div>
         </div>
       </div>
       <div class="field">
@@ -798,14 +826,14 @@
       <div class="field">
         <label>Classificação (marque uma, as duas, ou nenhuma)</label>
         <div class="mark-row">
-          <button type="button" class="mark-btn" id="evImpBtn" data-mark="imp">★ Importante</button>
-          <button type="button" class="mark-btn" id="evUrgBtn" data-mark="urg">⚡ Urgente</button>
+          <button type="button" class="mark-btn" id="evImpBtn" data-mark="imp">Importante</button>
+          <button type="button" class="mark-btn" id="evUrgBtn" data-mark="urg">Urgente</button>
         </div>
       </div>
-      <button type="button" id="evAiBtn" class="ai-btn">🤖 Delegar para Equipe/IA</button>
+      <button type="button" id="evAiBtn" class="ai-btn">Delegar para Equipe/IA</button>
       <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz — menos Eliminar — pra passar pra equipe ou mandar a IA resolver.</div>
-      <button type="button" id="evResolveBtn" class="btn ai-resolve-btn" style="display:none">🤖 Resolver com IA agora</button>
-      <button type="button" id="evSosBtn" class="sos-btn">🆘 SOS — emergência</button>
+      <button type="button" id="evResolveBtn" class="btn ai-resolve-btn" style="display:none">Resolver com IA agora</button>
+      <button type="button" id="evSosBtn" class="sos-btn">SOS — emergência</button>
       <div class="sos-hint">Use só pra emergência que precisa cair no pico (15h–22h) da agenda Pessoal.</div>
     </div>
 
@@ -825,19 +853,19 @@
       <div class="field">
         <label>Hora</label>
         <input type="time" id="tkTime">
-        <div class="hint" id="tkPeakHint">⚡ Dentro do seu pico de energia (15h–22h)</div>
+        <div class="hint" id="tkPeakHint"><svg class="ico" aria-hidden="true"><use href="#i-bolt"/></svg> Dentro do seu pico de energia (15h–22h)</div>
       </div>
       <div class="field">
         <label>Classificação (marque uma, as duas, ou nenhuma)</label>
         <div class="mark-row">
-          <button type="button" class="mark-btn" id="tkImpBtn" data-mark="imp">★ Importante</button>
-          <button type="button" class="mark-btn" id="tkUrgBtn" data-mark="urg">⚡ Urgente</button>
+          <button type="button" class="mark-btn" id="tkImpBtn" data-mark="imp">Importante</button>
+          <button type="button" class="mark-btn" id="tkUrgBtn" data-mark="urg">Urgente</button>
         </div>
       </div>
-      <button type="button" id="tkAiBtn" class="ai-btn">🤖 Delegar para Equipe/IA</button>
+      <button type="button" id="tkAiBtn" class="ai-btn">Delegar para Equipe/IA</button>
       <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz — menos Eliminar — pra passar pra equipe ou mandar a IA resolver.</div>
-      <button type="button" id="tkResolveBtn" class="btn ai-resolve-btn" style="display:none">🤖 Resolver com IA agora</button>
-      <button type="button" id="tkSosBtn" class="sos-btn">🆘 SOS — emergência</button>
+      <button type="button" id="tkResolveBtn" class="btn ai-resolve-btn" style="display:none">Resolver com IA agora</button>
+      <button type="button" id="tkSosBtn" class="sos-btn">SOS — emergência</button>
       <div class="sos-hint">Use só pra emergência que precisa cair no pico (15h–22h) da agenda Pessoal.</div>
     </div>
 
@@ -856,7 +884,7 @@
     <p class="theme-sub" id="ctxModalSub">Escolha uma agenda pra adicionar.</p>
     <div class="ctx-preset-grid" id="ctxPresetGrid"></div>
     <div class="ctx-danger" id="ctxDanger" style="display:none">
-      <button class="ctx-delete-btn" id="ctxDeleteBtn">🗑 Excluir esta agenda</button>
+      <button class="ctx-delete-btn" id="ctxDeleteBtn"><svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg> Excluir esta agenda</button>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" id="ctxCancel">Fechar</button>
@@ -867,7 +895,7 @@
 <!-- MODAL PAYWALL -->
 <div class="overlay" id="paywallOverlay">
   <div class="modal modal-sm">
-    <div class="upsell-badge">⚡ PRO</div>
+    <div class="upsell-badge">PRO</div>
     <h3>SmartDayZ Pro</h3>
 
     <!-- estado A: não logado -> login/cadastro -->
@@ -893,7 +921,7 @@
 
     <!-- estado C: logado e Pro ativo -->
     <div id="pwActive" style="display:none">
-      <p class="theme-sub">✅ Pro <b>ativo</b> na conta <b id="pwUserEmail2"></b>. Obrigado por apoiar o app.</p>
+      <p class="theme-sub">Pro <b>ativo</b> na conta <b id="pwUserEmail2"></b>. Obrigado por apoiar o app.</p>
       <button class="ctx-delete-btn" id="pwSignOut2">Sair da conta</button>
     </div>
 
@@ -922,14 +950,14 @@
 <!-- MODAL EXPORT -->
 <div class="overlay" id="exportOverlay">
   <div class="modal modal-sm">
-    <h3>Exportar <span class="theme-pro-badge">⚡ PRO</span></h3>
+    <h3>Exportar <span class="theme-pro-badge">PRO</span></h3>
     <p class="theme-sub">Exporta o contexto <b id="exportCtxName">Pessoal</b> (compromissos e tarefas).</p>
     <button class="export-opt" id="exportIcs">
-      <span class="eo-ic">📅</span>
+      <span class="eo-ic"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg></span>
       <span class="eo-txt"><b>Calendário (.ics)</b><small>Importe no Google, Apple ou Outlook</small></span>
     </button>
     <button class="export-opt" id="exportPdf">
-      <span class="eo-ic">🖨️</span>
+      <span class="eo-ic"><svg class="ico" aria-hidden="true"><use href="#i-printer"/></svg></span>
       <span class="eo-txt"><b>PDF / Imprimir</b><small>Salve como PDF na janela de impressão</small></span>
     </button>
     <div class="modal-actions">
@@ -943,7 +971,7 @@
 <!-- MODAL RESULTADO IA -->
 <div class="overlay" id="aiResultOverlay">
   <div class="modal">
-    <h3>🤖 Resultado da IA</h3>
+    <h3><svg class="ico filled" aria-hidden="true"><use href="#i-sparkles"/></svg> Resultado da IA</h3>
     <p class="theme-sub" id="aiResultTitle"></p>
     <div class="ai-result" id="aiResultBody"></div>
     <div class="modal-actions">
@@ -957,7 +985,7 @@
 <!-- MODAL TEMA -->
 <div class="overlay" id="themeOverlay">
   <div class="modal modal-sm">
-    <h3>Tema <span class="theme-pro-badge">⚡ PRO</span></h3>
+    <h3>Tema <span class="theme-pro-badge">PRO</span></h3>
     <p class="theme-sub">Escolha a vibe do app. As cores de significado (pico, matriz) não mudam.</p>
     <div class="theme-grid" id="themeGrid"></div>
     <div class="modal-actions">
@@ -969,7 +997,7 @@
 <!-- MODAL UPSELL (placeholder até o paywall) -->
 <div class="overlay" id="upsellOverlay">
   <div class="modal modal-sm">
-    <div class="upsell-badge">⚡ PRO</div>
+    <div class="upsell-badge">PRO</div>
     <h3 id="upsellTitle">Múltiplos contextos</h3>
     <p class="upsell-text" id="upsellText">Separe Pessoal, cada negócio e cada projeto em agendas e matrizes independentes. No plano grátis você tem 1 contexto.</p>
     <div class="modal-actions">
@@ -1183,8 +1211,8 @@
     if (!canSync() || syncState.status === "off") { el.style.display = "none"; return; }
     const map = {
       syncing: { cls: "is-syncing", txt: "sincronizando…", tip: "Enviando/baixando seus dados" },
-      ok:      { cls: "is-ok",      txt: "☁ sincronizado", tip: "Seus dados estão salvos na nuvem" },
-      error:   { cls: "is-error",   txt: "⚠ sync falhou",  tip: "Erro: " + syncState.msg + "\nSeus dados seguem salvos neste aparelho." }
+      ok:      { cls: "is-ok",      txt: "sincronizado", tip: "Seus dados estão salvos na nuvem" },
+      error:   { cls: "is-error",   txt: "sync falhou",  tip: "Erro: " + syncState.msg + "\nSeus dados seguem salvos neste aparelho." }
     };
     const s = map[syncState.status] || map.syncing;
     el.style.display = "";
@@ -1404,7 +1432,7 @@
         el.title = "Histórico além de 30 dias é Pro";
         el.addEventListener("click", () => showUpsell("history"));
       } else {
-        if (isDayOff(ds)) { const o = document.createElement("span"); o.className = "dayoff-badge"; o.textContent = "☀️"; el.appendChild(o); }
+        if (isDayOff(ds)) { const o = document.createElement("span"); o.className = "dayoff-badge"; o.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg>'; el.appendChild(o); }
         const evs = ctxData().events.filter(e => e.date === ds);
         const dots = document.createElement("div"); dots.className = "dots";
         evs.slice(0, 3).forEach(e => { const i = document.createElement("i"); if (isImportant(e)) i.className = "imp"; dots.appendChild(i); });
@@ -1433,7 +1461,7 @@
     zone.className = "peak-zone";
     zone.style.left = pct(PEAK_START) + "%";
     zone.style.width = (pct(PEAK_END) - pct(PEAK_START)) + "%";
-    zone.innerHTML = '<span class="peak-label">⚡ PICO</span>';
+    zone.innerHTML = '<span class="peak-label"><svg class="ico filled" aria-hidden="true"><use href="#i-bolt"/></svg> PICO</span>';
     tl.appendChild(zone);
 
     const hours = document.createElement("div"); hours.className = "tl-hours";
@@ -1477,14 +1505,14 @@
     const off = isDayOff(selected);
     const offBtn = $("#dayOffBtn");
     offBtn.classList.toggle("on", off);
-    offBtn.textContent = off ? "☀️ Day off ✓" : "☀️ Day off";
+    offBtn.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg> Day off' + (off ? " ✓" : "");
 
     const list = $("#dayList");
     list.innerHTML = "";
     if (off) {
       const banner = document.createElement("div");
       banner.className = "dayoff-banner";
-      banner.innerHTML = "☀️ Dia de folga — hoje só a agenda Pessoal aceita novos itens.";
+      banner.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg> Dia de folga — hoje só a agenda Pessoal aceita novos itens.';
       list.appendChild(banner);
     }
 
@@ -1495,7 +1523,7 @@
 
     if (!evs.length && !dayTasks.length) {
       const empty = document.createElement("div");
-      empty.className = "empty"; empty.innerHTML = '<span class="big">🗓️</span>Nada neste dia';
+      empty.className = "empty"; empty.innerHTML = '<svg class="ico ico-lg" aria-hidden="true"><use href="#i-empty-cal"/></svg>' + "Nada neste dia";
       list.appendChild(empty);
       return;
     }
@@ -1508,17 +1536,17 @@
 
       let badges = "";
       if (discard) {
-        badges += '<span class="badge-chip discard">🗑 Descartar</span>';
+        badges += '<span class="badge-chip discard"><svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg> Descartar</span>';
       } else if (e.quad) {
         const q = QUAD[e.quad];
         badges += '<span class="badge-chip q" style="background:' + q.color + '">' + q.name + '</span>';
       }
       if (imp && e.time) {
         badges += inPeak(e.time)
-          ? '<span class="badge-chip peak">⚡ no pico</span>'
+          ? '<span class="badge-chip peak"><svg class="ico filled" aria-hidden="true"><use href="#i-bolt"/></svg> no pico</span>'
           : '<span class="badge-chip offpeak">fora do pico</span>';
       }
-      if (e.sos) badges += '<span class="badge-chip sos">🆘 SOS</span>';
+      if (e.sos) badges += '<span class="badge-chip sos"><svg class="ico" aria-hidden="true"><use href="#i-sos"/></svg> SOS</span>';
 
       div.innerHTML =
         '<div class="check ev-check" title="Concluir"></div>' +
@@ -1558,7 +1586,7 @@
     pending.sort((a, b) => dueRank(a) - dueRank(b));
     done.sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
 
-    if (!ctxData().tasks.length) { list.innerHTML = '<div class="empty"><span class="big">✅</span>Sem tarefas. Tudo em dia.</div>'; return; }
+    if (!ctxData().tasks.length) { list.innerHTML = '<div class="empty"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-check-circle"/></svg>' + "Sem tarefas. Tudo em dia.</div>"; return; }
     list.innerHTML = "";
 
     function row(t) {
@@ -1571,7 +1599,7 @@
         const label = t.due === todayISO ? "hoje" : shortDate(t.due);
         dueHtml = '<span class="due' + (overdue ? ' overdue' : '') + '">' + (overdue ? '⚠ ' : '') + label + '</span>';
       }
-      const discardHtml = discard ? '<span class="badge-chip discard">🗑 Descartar</span>' : '';
+      const discardHtml = discard ? '<span class="badge-chip discard"><svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg> Descartar</span>' : '';
       div.innerHTML = '<div class="check"></div><div class="ttl"></div>' + discardHtml + dueHtml + '<button class="del" title="Excluir">✕</button>';
       div.querySelector(".ttl").textContent = t.title;
       div.querySelector(".check").addEventListener("click", () => { t.done = !t.done; t.doneAt = t.done ? Date.now() : null; save(); render(); });
@@ -1598,7 +1626,7 @@
     let meta = "";
     if (kind === "event") {
       meta = shortDate(item.date) + (item.time ? " · " + item.time : "");
-      if (isImportant(item) && item.time) meta += inPeak(item.time) ? ' · <span class="peak-tag">⚡ pico</span>' : ' · fora do pico';
+      if (isImportant(item) && item.time) meta += inPeak(item.time) ? ' · <span class="peak-tag"><svg class="ico filled" aria-hidden="true"><use href="#i-bolt"/></svg> pico</span>' : ' · fora do pico';
     } else if (item.entrega) {
       meta = "entrega · " + shortDate(item.due);
     } else if (item.due) {
@@ -1617,12 +1645,12 @@
     // hora da tarefa (novo): mostra o horário e, se for importante, se cai no pico.
     if (kind === "task" && !item.done && item.time) {
       let pref = item.time;
-      if (isImportant(item)) pref += inPeak(item.time) ? ' · <span class="peak-tag">⚡ pico</span>' : ' · fora do pico';
+      if (isImportant(item)) pref += inPeak(item.time) ? ' · <span class="peak-tag"><svg class="ico filled" aria-hidden="true"><use href="#i-bolt"/></svg> pico</span>' : ' · fora do pico';
       meta = pref + (meta ? " · " + meta : "");
     }
     if (kind === "task" && item.done) meta = "concluída";
-    const icon = kind === "event" ? "📅" : (item.entrega ? "🎯" : "✓");
-    const marks = (markImp(item) ? '<span class="mk mk-imp" title="Importante">★</span>' : "") + (markUrg(item) ? '<span class="mk mk-urg" title="Urgente">⚡</span>' : "") + (markAI(item) ? '<span class="mk mk-ai" title="Delegar para Equipe/IA">🤖</span>' : "");
+    const icon = kind === "event" ? '<svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>' : (item.entrega ? '<svg class="ico" aria-hidden="true"><use href="#i-target"/></svg>' : "✓");
+    const marks = (markImp(item) ? '<span class="mk mk-imp" title="Importante"><svg class="ico filled" aria-hidden="true"><use href="#i-star"/></svg></span>' : "") + (markUrg(item) ? '<span class="mk mk-urg" title="Urgente"><svg class="ico filled" aria-hidden="true"><use href="#i-bolt"/></svg></span>' : "") + (markAI(item) ? '<span class="mk mk-ai" title="Delegar para Equipe/IA"><svg class="ico filled" aria-hidden="true"><use href="#i-sparkles"/></svg></span>' : "");
     el.innerHTML = '<span class="kind">' + icon + '</span>' +
       '<div class="ac-body"><div class="ac-title"></div><div class="ac-meta">' + marks + meta + '</div></div>';
     el.querySelector(".ac-title").textContent = item.title;
@@ -1650,10 +1678,10 @@
     }
     if (quad === "q3") {
       if (markImp(item)) return "Delegar é pra o que NÃO é importante. " + nm + " está marcada como Importante — foque nela, não delegue.";
-      return "Delegar é pra o urgente (mas não importante). " + nm + " não está marcada como Urgente — ligue “🤖 Delegar para Equipe/IA” na edição pra mandar mesmo sem urgência.";
+      return "Delegar é pra o urgente (mas não importante). " + nm + " não está marcada como Urgente — ligue “Delegar para Equipe/IA” na edição pra mandar mesmo sem urgência.";
     }
     if (quad === "q4") {
-      if (markAI(item)) return "Eliminar não recebe o que está delegado. " + nm + " está em “🤖 Delegar para Equipe/IA” — se é pra descartar, desligue a delegação primeiro.";
+      if (markAI(item)) return "Eliminar não recebe o que está delegado. " + nm + " está em “Delegar para Equipe/IA” — se é pra descartar, desligue a delegação primeiro.";
       if (markImp(item)) return "Eliminar é pra o que não importa. " + nm + " está marcada como Importante — não descarte.";
       return "Eliminar é pra o que não é urgente. " + nm + " é " + urgTxt + " — trate antes de descartar.";
     }
@@ -1727,7 +1755,7 @@
     // que dura vários dias aparece em cada um deles. A "Entrega — <nome>" (start===due) some
     // no seu único dia. Datas ISO YYYY-MM-DD comparam corretamente por ordem lexicográfica.
     $("#matrixDateTitle").textContent = "Matriz — " + prettyDay(selected);
-    $("#matrixDateSub").textContent = prettyDateFull(selected) + (isDayOff(selected) ? " · ☀️ day off" : "");
+    $("#matrixDateSub").textContent = prettyDateFull(selected) + (isDayOff(selected) ? " · day off" : "");
 
     const evOfDay = ctxData().events.filter(e => e.date === selected);
     const tkOfDay = ctxData().tasks.filter(t => {
@@ -1756,7 +1784,7 @@
         '<div class="quad-head">' +
           '<div class="qname"><span class="badge-q">' + q.tag + '</span>' + q.name + '</div>' +
           '<div class="qsub">' + q.sub + '</div>' +
-          (q.tip ? '<div class="qtip">⚡ ' + q.tip + '</div>' : '') +
+          (q.tip ? '<div class="qtip"><svg class="ico filled" aria-hidden="true"><use href="#i-bolt"/></svg> ' + q.tip + '</div>' : '') +
         '</div><div class="quad-cards"></div>';
       const cards = box.querySelector(".quad-cards");
 
@@ -1987,7 +2015,7 @@
     if (!isPro()) { showUpsell("ai"); return; }
     const note = kind === "event" ? $("#evNote").value : "";
     const btn = $(kind === "event" ? "#evResolveBtn" : "#tkResolveBtn");
-    btn.disabled = true; btn.textContent = "🤖 Gerando...";
+    btn.disabled = true; btn.textContent = 'Gerando...';
     // guarda o item pra "concluir" — só quando editando um existente
     lastAiCtx = (editing && editing.kind === kind) ? { kind, id: editing.id } : null;
     $("#aiResultTitle").textContent = title;
@@ -2003,7 +2031,7 @@
       body.textContent = "Não deu pra gerar: " + (e && e.message ? e.message : "erro desconhecido");
       $("#aiResultDone").style.display = "none";
     } finally {
-      btn.disabled = false; btn.textContent = "🤖 Resolver com IA agora";
+      btn.disabled = false; btn.textContent = 'Resolver com IA agora';
     }
   }
   function renderThemes() {
@@ -2017,7 +2045,7 @@
       sw.innerHTML =
         '<span class="sw-chip" style="background:linear-gradient(135deg,' + t.accent + ',' + t.indigo + ')"></span>' +
         '<span class="sw-name">' + t.name + '</span>' +
-        (locked ? '<span class="sw-lock">🔒</span>' : (id === cur ? '<span class="sw-check">✓</span>' : ''));
+        (locked ? '<span class="sw-lock"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span>' : (id === cur ? '<span class="sw-check">✓</span>' : ''));
       sw.addEventListener("click", () => {
         if (locked) { closeThemeModal(); showUpsell("theme"); return; }
         localStorage.setItem("agenda.theme", id);
@@ -2228,7 +2256,7 @@
 
     let html;
     if (!d.importantCount) {
-      html = '<div class="panel"><div class="empty"><span class="big">🎯</span>Sem atividades importantes ' + scopeLabel + '.<br>' +
+      html = '<div class="panel"><div class="empty"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-target"/></svg>' + 'Sem atividades importantes ' + scopeLabel + '.<br>' +
         'Classifique compromissos e tarefas como <b>Fazer agora</b> ou <b>Foco</b> na Matriz pra acompanhar quanto do seu trabalho que muda o jogo cai no pico.</div></div>';
     } else {
       let insight, cls;
@@ -2274,7 +2302,7 @@
     // seção Sugestões (sempre, mesmo sem atividades importantes no período)
     const sugs = reportSuggestions(d);
     html += '<div class="panel suggest">' +
-      '<div class="suggest-head">💡 Sugestões de melhoria</div>' +
+      '<div class="suggest-head"><svg class="ico" aria-hidden="true"><use href="#i-bulb"/></svg> Sugestões de melhoria</div>' +
       (sugs.length
         ? '<ul class="suggest-list">' + sugs.map(s => '<li class="sug ' + s.type + '">' + s.text + '</li>').join("") + '</ul>'
         : '<div class="suggest-ok">Nada a ajustar por aqui — horários e prazos estão coerentes.</div>') +
@@ -2283,7 +2311,7 @@
     // dica da IA (Pro): coach de produtividade que lê o período, mesmo quando está tudo coerente.
     if (isPro()) {
       html += '<div class="panel suggest ai-tip" id="aiTipPanel">' +
-        '<div class="suggest-head">🤖 Dica da IA</div>' +
+        '<div class="suggest-head"><svg class="ico filled" aria-hidden="true"><use href="#i-sparkles"/></svg> Dica da IA</div>' +
         '<div class="ai-tip-body" id="aiTipBody"></div>' +
         '<button type="button" class="btn-ghost ai-tip-btn" id="aiTipBtn">Gerar dica</button>' +
         '</div>';
@@ -2400,7 +2428,7 @@
       // pico na Pessoal (com mais de uma agenda): reservado pro trabalho que muda o jogo.
       // A ÚNICA quebra é a emergência (SOS) — day off não libera mais o pico.
       if (isPersonalCtx() && store.contexts.length > 1 && time && inPeak(time) && !sosFlag) {
-        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como 🆘 SOS se for emergência.";
+        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como SOS se for emergência.";
         return;
       }
       if (editing && editing.kind === "event") {
@@ -2423,7 +2451,7 @@
       }
       // mesma regra do pico dos compromissos: na Pessoal (com +1 agenda), pico só com SOS.
       if (isPersonalCtx() && store.contexts.length > 1 && time && inPeak(time) && !sosFlag) {
-        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como 🆘 SOS se for emergência.";
+        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como SOS se for emergência.";
         return;
       }
       if (editing && editing.kind === "task") {
