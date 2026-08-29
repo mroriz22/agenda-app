@@ -84,7 +84,7 @@ export function AiPanel() {
       </div>
 
       <div className="mt-4 flex items-start gap-3 rounded-[12px] border border-hairline p-4">
-        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-cyan" />
+        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-deep" />
         <p className="text-[14px] leading-relaxed text-slate">
           Dica do dia: você empilhou três reuniões no seu pico de foco. Puxe uma
           delas para depois das 14h.

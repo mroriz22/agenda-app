@@ -41,7 +41,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="#como-funciona"
-                className="inline-flex items-center justify-center rounded-[8px] bg-ink px-6 py-3.5 text-[17px] font-semibold text-paper transition hover:brightness-125"
+                className="inline-flex items-center justify-center rounded-[8px] bg-deep px-6 py-3.5 text-[17px] font-semibold text-paper transition hover:brightness-125"
               >
                 Ver como funciona
               </Link>
@@ -55,11 +55,11 @@ export default function HomePage() {
           <div className="relative">
             <div
               aria-hidden
-              className="pointer-events-none absolute -top-12 left-0 h-64 w-64 rounded-full bg-cyan opacity-25 blur-3xl lg:-left-10"
+              className="pointer-events-none absolute -top-12 left-0 h-64 w-64 rounded-full bg-blob-a opacity-25 blur-3xl lg:-left-10"
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute -bottom-14 right-0 h-64 w-64 rounded-full bg-magenta opacity-20 blur-3xl lg:-right-6"
+              className="pointer-events-none absolute -bottom-14 right-0 h-64 w-64 rounded-full bg-blob-b opacity-20 blur-3xl lg:-right-6"
             />
             <DayCard />
           </div>
@@ -97,7 +97,7 @@ export default function HomePage() {
                 "Sobrou tarefa leve? Encaixa no fim do dia",
               ]}
               visual={<FocusPanel />}
-              blob="cyan"
+              blob="a"
             />
             <Feature
               step="02"
@@ -109,7 +109,7 @@ export default function HomePage() {
                 "Dica de ritmo lendo o seu dia inteiro",
               ]}
               visual={<AiPanel />}
-              blob="magenta"
+              blob="b"
               flip
             />
             <Feature
@@ -122,14 +122,14 @@ export default function HomePage() {
                 "Seus dados saem quando você quiser",
               ]}
               visual={<SyncPanel />}
-              blob="cyan"
+              blob="a"
             />
           </div>
         </section>
 
         {/* ── CTA final ── */}
         <section className="mx-auto w-full max-w-[1200px] px-6 pb-24">
-          <div className="rounded-[24px] bg-ink px-8 py-16 text-center sm:px-16">
+          <div className="rounded-[24px] bg-deep px-8 py-16 text-center sm:px-16">
             <h2 className="text-[32px] font-bold leading-[1.2] tracking-[-0.02em] text-paper sm:text-[44px]">
               Comece o próximo dia no ritmo certo
             </h2>
@@ -168,9 +168,7 @@ function SiteNav() {
     <header className="sticky top-0 z-50 border-b border-hairline/70 bg-cloud/85 backdrop-blur">
       <nav className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-signal text-sm font-bold text-paper">
-            S
-          </span>
+          <img src="/icon.svg" alt="" className="h-8 w-8" />
           <span className="text-[17px] font-bold tracking-[-0.01em] text-ink">
             SmartDayZ
           </span>
@@ -227,7 +225,7 @@ function Feature({
   body: string;
   bullets: string[];
   visual: React.ReactNode;
-  blob: "cyan" | "magenta";
+  blob: "a" | "b";
   flip?: boolean;
 }) {
   return (
@@ -268,7 +266,7 @@ function Feature({
           className={`pointer-events-none absolute -top-10 ${
             flip ? "right-0 lg:-right-8" : "left-0 lg:-left-8"
           } h-56 w-56 rounded-full blur-3xl ${
-            blob === "cyan" ? "bg-cyan opacity-20" : "bg-magenta opacity-20"
+            blob === "a" ? "bg-blob-a opacity-20" : "bg-blob-b opacity-20"
           }`}
         />
         {visual}
@@ -283,9 +281,7 @@ function SiteFooter({ appName }: { appName: string }) {
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-10 px-6 py-14 sm:flex-row sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-signal text-sm font-bold text-paper">
-              S
-            </span>
+            <img src="/icon.svg" alt="" className="h-8 w-8" />
             <span className="text-[17px] font-bold text-ink">{appName}</span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate">

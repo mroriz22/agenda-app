@@ -1,19 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta — Calendly reference */
-  --color-ink: #0b3558;
-  --color-signal: #006bff;
-  --color-slate: #476788;
-  --color-mist: #a6bbd1;
-  --color-cloud: #f8f9fb;
-  --color-paper: #ffffff;
-  --color-pebble: #f0f3f8;
-  --color-hairline: #d4e0ed;
-  --color-magenta: #e55cff;
-  --color-cyan: #0099ff;
-  --color-cobalt: #004eba;
-  --color-badge: #e6f0ff;
+  /* Identidade SmartDayZ — marinho e laranja da logo sobre papel,
+     mesma paleta que o app usa por dentro. */
+  --color-ink: #23291f;        /* texto principal */
+  --color-slate: #6b6551;      /* texto secundário */
+  --color-mist: #9a9179;       /* texto apagado */
+  --color-cloud: #efe7d6;      /* fundo da página */
+  --color-paper: #fbf7ef;      /* cartão */
+  --color-pebble: #f5efe1;     /* preenchimento sutil */
+  --color-hairline: #dccfb6;   /* borda e divisor */
+
+  --color-deep: #0b1a40;       /* marinho da logo — superfícies escuras */
+  --color-signal: #b3560a;     /* laranja queimada — ação principal */
+  --color-cobalt: #0b1a40;     /* texto sobre badge */
+  --color-badge: #e7ddc9;      /* fundo de badge */
+
+  --color-blob-a: #0b1a40;     /* mancha decorativa marinho */
+  --color-blob-b: #fb7915;     /* mancha decorativa laranja */
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
@@ -21,15 +25,15 @@
   --radius-product: 16px;
   --radius-btn: 8px;
 
-  --shadow-card: rgba(71, 103, 136, 0.04) 0px 4px 5px 0px,
-    rgba(71, 103, 136, 0.03) 0px 8px 15px 0px,
-    rgba(71, 103, 136, 0.08) 0px 30px 50px 0px;
-  --shadow-soft: rgba(71, 103, 136, 0.04) 0px 4px 5px 0px,
-    rgba(71, 103, 136, 0.03) 0px 4px 10px 0px,
-    rgba(71, 103, 136, 0.05) 0px 10px 20px 0px;
-  --shadow-btn: rgba(71, 103, 136, 0.04) 0px 4px 5px 0px,
-    rgba(71, 103, 136, 0.03) 0px 8px 15px 0px,
-    rgba(71, 103, 136, 0.06) 0px 15px 30px 0px;
+  --shadow-card: rgba(35, 41, 31, 0.05) 0px 4px 5px 0px,
+    rgba(35, 41, 31, 0.04) 0px 8px 15px 0px,
+    rgba(35, 41, 31, 0.09) 0px 30px 50px 0px;
+  --shadow-soft: rgba(35, 41, 31, 0.04) 0px 4px 5px 0px,
+    rgba(35, 41, 31, 0.04) 0px 4px 10px 0px,
+    rgba(35, 41, 31, 0.06) 0px 10px 20px 0px;
+  --shadow-btn: rgba(35, 41, 31, 0.05) 0px 4px 5px 0px,
+    rgba(35, 41, 31, 0.04) 0px 8px 15px 0px,
+    rgba(35, 41, 31, 0.07) 0px 15px 30px 0px;
 }
 
 html {
@@ -38,9 +42,6 @@ html {
 
 body {
   overflow-x: clip;
-}
-
-body {
   background: var(--color-cloud);
   color: var(--color-ink);
   font-family: var(--font-sans);

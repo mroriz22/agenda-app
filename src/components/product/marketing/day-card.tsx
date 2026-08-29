@@ -32,7 +32,7 @@ const BLOCKS = [
 const DOT = {
   peak: "bg-signal",
   dip: "bg-mist",
-  low: "bg-cyan",
+  low: "bg-deep",
 };
 
 export function DayCard() {
@@ -59,14 +59,14 @@ export function DayCard() {
         <svg viewBox="0 0 320 72" className="mt-3 h-[72px] w-full" aria-hidden>
           <defs>
             <linearGradient id="energyFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#006bff" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="#006bff" stopOpacity="0" />
+              <stop offset="0%" stopColor="var(--color-signal)" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="var(--color-signal)" stopOpacity="0" />
             </linearGradient>
           </defs>
           <path
             d="M0 52 C 26 46, 40 12, 74 14 C 108 16, 118 40, 150 52 C 178 62, 190 60, 212 46 C 236 31, 252 26, 276 32 C 296 37, 308 46, 320 50"
             fill="none"
-            stroke="#006bff"
+            stroke="var(--color-signal)"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
@@ -74,8 +74,8 @@ export function DayCard() {
             d="M0 52 C 26 46, 40 12, 74 14 C 108 16, 118 40, 150 52 C 178 62, 190 60, 212 46 C 236 31, 252 26, 276 32 C 296 37, 308 46, 320 50 L320 72 L0 72 Z"
             fill="url(#energyFill)"
           />
-          <circle cx="74" cy="14" r="4.5" fill="#006bff" />
-          <circle cx="74" cy="14" r="9" fill="#006bff" opacity="0.15" />
+          <circle cx="74" cy="14" r="4.5" fill="var(--color-signal)" />
+          <circle cx="74" cy="14" r="9" fill="var(--color-signal)" opacity="0.15" />
         </svg>
         <div className="flex justify-between pb-1 text-[11px] font-medium text-mist">
           <span>07h</span>
