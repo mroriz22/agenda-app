@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const appName = process.env.APP_NAME ?? "SaaS Template";
+const appName = process.env.APP_NAME ?? "SmartDayZ";
 
 export const metadata: Metadata = {
-  title: appName,
-  description: "SaaS factory template — Next.js + Better Auth + Quack Checkout",
+  title: `${appName} — sua agenda no seu melhor horário`,
+  description:
+    "Organize o dia pelo seu ritmo biológico: tarefa difícil no pico de energia, tarefa leve na queda. Com IA que resolve a tarefa por você.",
 };
 
 export default function RootLayout({
@@ -25,13 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
-        {children}
-      </body>
+    <html lang="pt-BR" className={`${manrope.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }
