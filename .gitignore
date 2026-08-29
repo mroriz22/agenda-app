@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Repo separado do app publicado (GitHub Pages, remoto proprio)
+/app-deploy/
