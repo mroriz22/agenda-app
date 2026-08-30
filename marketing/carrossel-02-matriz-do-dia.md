@@ -2,6 +2,10 @@
 
 *Criado em: 2026-08-30. Formato: 8 slides, 1080x1350 (4:5). Publicação: terça 8/9, 19h.*
 
+**Artes prontas:** [carrossel-02-matriz-do-dia/](./carrossel-02-matriz-do-dia/), arquivos
+`slide-01.png` a `slide-08.png`, já no tamanho de post. A fonte é o `slides.html` da mesma
+pasta; pra regenerar depois de editar, rode o `render.sh`.
+
 Post da semana 2 do [calendário de setembro](./calendario-editorial-setembro-2026.md).
 Objetivo: ensinar a matriz do dia com exemplos da dona de negócio e levar pro teste de
 7 dias. Voz: [brand-voice-guide.md](../.agents/brand-voice-guide.md).
