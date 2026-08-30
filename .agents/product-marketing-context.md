@@ -151,9 +151,11 @@ sistema definitivo, transformar sua vida, rotina de CEO.
 
 ## Voz da marca
 
-**Tom:** direto e adulto, sem palestra motivacional.
-**Estilo:** frase curta, verbo no presente, exemplo concreto no lugar de conceito.
-**Personalidade:** prática, honesta, calma, um pouco teimosa em defender o seu tempo.
+Guia completo, com regras de escrita e exemplos por canal: [brand-voice-guide.md](./brand-voice-guide.md).
+
+**Resumo:** o SmartDayZ fala como uma treinadora que protege o seu tempo. Direta, prática,
+honesta e calma. Cobra a agenda, nunca a pessoa. Sem emoji em lugar nenhum, sem travessão,
+sem urgência inventada.
 
 Referência de tom que já está no ar: "Você para de brigar com o próprio corpo pra render."
 
