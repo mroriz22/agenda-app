@@ -2,17 +2,32 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+
+/** Traduz o recado técnico do Better Auth pra uma frase que a pessoa entende. */
+function recado(bruto: string, modo: "login" | "signup") {
+  const t = bruto.toLowerCase();
+  if (t.includes("invalid") && t.includes("password")) return "E-mail ou senha não conferem.";
+  if (t.includes("invalid email") || t.includes("user not found")) return "E-mail ou senha não conferem.";
+  if (t.includes("already") || t.includes("exists")) return "Já existe uma conta com esse e-mail. Tente entrar.";
+  if (t.includes("password") && t.includes("short")) return "A senha precisa de pelo menos 8 caracteres.";
+  if (t.includes("network") || t.includes("fetch")) return "Não deu pra falar com o servidor. Confira a internet e tente de novo.";
+  return modo === "login"
+    ? "Não consegui entrar agora. Tente de novo em instantes."
+    : "Não consegui criar a conta agora. Tente de novo em instantes.";
+}
 
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verSenha, setVerSenha] = useState(false);
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const id = useId();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,71 +44,119 @@ export default function LoginPage() {
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(recado(err instanceof Error ? err.message : String(err), mode));
     } finally {
       setLoading(false);
     }
   }
 
+  const campo =
+    "w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700";
+  const rotulo = "block text-sm font-medium text-zinc-700 dark:text-zinc-300";
+
   return (
     <main className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center gap-6 px-6 py-16">
       <div className="space-y-1">
         <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
-          ← home
+          ← voltar
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {mode === "login" ? "Entrar" : "Criar conta"}
+          {mode === "login" ? "Entrar no SmartDayZ" : "Criar sua conta"}
         </h1>
-        <p className="text-sm text-zinc-500">
-          Acesso liberado via Quack webhook ou signup manual (dev).
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          {mode === "login"
+            ? "Sua agenda, a matriz do dia e o aproveitamento do seu pico de energia."
+            : "São 7 dias de teste, sem cartão. Depois você decide se continua."}
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-3">
+      <form onSubmit={onSubmit} className="space-y-4" noValidate={false}>
         {mode === "signup" && (
-          <input
-            className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700"
-            placeholder="Nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoComplete="name"
-          />
+          <div className="space-y-1.5">
+            <label className={rotulo} htmlFor={`${id}-nome`}>
+              Como quer ser chamada
+            </label>
+            <input
+              id={`${id}-nome`}
+              className={campo}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
+            />
+          </div>
         )}
-        <input
-          className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700"
-          type="email"
-          required
-          placeholder="email@exemplo.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-        />
-        <input
-          className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700"
-          type="password"
-          required
-          minLength={8}
-          placeholder="senha (min 8)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete={mode === "login" ? "current-password" : "new-password"}
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <div className="space-y-1.5">
+          <label className={rotulo} htmlFor={`${id}-email`}>
+            E-mail
+          </label>
+          <input
+            id={`${id}-email`}
+            className={campo}
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className={rotulo} htmlFor={`${id}-senha`}>
+            Senha
+          </label>
+          <div className="relative">
+            <input
+              id={`${id}-senha`}
+              className={`${campo} pr-20`}
+              type={verSenha ? "text" : "password"}
+              required
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              aria-describedby={mode === "signup" ? `${id}-regra` : undefined}
+            />
+            <button
+              type="button"
+              onClick={() => setVerSenha(!verSenha)}
+              aria-pressed={verSenha}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+            >
+              {verSenha ? "ocultar" : "ver"}
+            </button>
+          </div>
+          {mode === "signup" && (
+            <p id={`${id}-regra`} className="text-xs text-zinc-500">
+              Pelo menos 8 caracteres.
+            </p>
+          )}
+        </div>
+
+        {error && (
+          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
           disabled={loading}
           className="w-full rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
         >
-          {loading ? "..." : mode === "login" ? "Entrar" : "Criar conta"}
+          {loading ? "Um instante…" : mode === "login" ? "Entrar" : "Criar conta e começar o teste"}
         </button>
       </form>
 
       <button
         type="button"
         className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
-        onClick={() => setMode(mode === "login" ? "signup" : "login")}
+        onClick={() => {
+          setMode(mode === "login" ? "signup" : "login");
+          setError(null);
+        }}
       >
-        {mode === "login" ? "Não tem conta? Criar" : "Já tem conta? Entrar"}
+        {mode === "login" ? "Não tem conta? Criar agora" : "Já tem conta? Entrar"}
       </button>
     </main>
   );
