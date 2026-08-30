@@ -51,19 +51,19 @@ export default function LoginPage() {
   }
 
   const campo =
-    "w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700";
-  const rotulo = "block text-sm font-medium text-zinc-700 dark:text-zinc-300";
+    "w-full rounded-btn border border-hairline bg-transparent px-3 py-2.5 text-sm outline-none focus:border-signal";
+  const rotulo = "block text-sm font-medium text-ink";
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center gap-6 px-6 py-16">
       <div className="space-y-1">
-        <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
+        <Link href="/" className="text-sm text-slate hover:text-ink">
           ← voltar
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">
           {mode === "login" ? "Entrar no SmartDayZ" : "Criar sua conta"}
         </h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-slate">
           {mode === "login"
             ? "Sua agenda, a matriz do dia e o aproveitamento do seu pico de energia."
             : "São 7 dias de teste, sem cartão. Depois você decide se continua."}
@@ -121,20 +121,20 @@ export default function LoginPage() {
               type="button"
               onClick={() => setVerSenha(!verSenha)}
               aria-pressed={verSenha}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-slate hover:text-ink"
             >
               {verSenha ? "ocultar" : "ver"}
             </button>
           </div>
           {mode === "signup" && (
-            <p id={`${id}-regra`} className="text-xs text-zinc-500">
+            <p id={`${id}-regra`} className="text-xs text-slate">
               Pelo menos 8 caracteres.
             </p>
           )}
         </div>
 
         {error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          <p role="alert" className="rounded-btn bg-signal/10 px-3 py-2 text-sm text-signal">
             {error}
           </p>
         )}
@@ -142,7 +142,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="w-full rounded-btn bg-signal py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
         >
           {loading ? "Um instante…" : mode === "login" ? "Entrar" : "Criar conta e começar o teste"}
         </button>
@@ -150,7 +150,7 @@ export default function LoginPage() {
 
       <button
         type="button"
-        className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+        className="text-sm text-slate hover:text-ink"
         onClick={() => {
           setMode(mode === "login" ? "signup" : "login");
           setError(null);
