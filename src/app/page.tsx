@@ -2,6 +2,7 @@ import Link from "next/link";
 import { factoryConfig } from "@/factory/config";
 import { DayCard } from "@/components/product/marketing/day-card";
 import { FocusPanel, AiPanel, SyncPanel } from "@/components/product/marketing/panels";
+import { OnboardingVenda } from "@/components/onboarding-venda";
 
 const appName = factoryConfig.appName === "SaaS Template" ? "SmartDayZ" : factoryConfig.appName;
 
@@ -10,6 +11,7 @@ export default function HomePage() {
 
   return (
     <>
+      <OnboardingVenda />
       <SiteNav />
 
       <main className="flex flex-col">
