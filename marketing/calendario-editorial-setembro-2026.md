@@ -1,9 +1,12 @@
 # Calendário editorial: setembro de 2026
 
 *Criado em: 2026-08-30. Canais: Instagram (principal) e TikTok (repost dos reels).*
+*Atualizado em: 2026-08-31. Reels falados com rosto saíram do plano; formato agora é gravação de tela, sem apresentador.*
 
-Decisões que guiam este calendário: 3 posts de feed por semana, 1 reels com rosto por
-semana, o resto em design e tela do app. Voz: [brand-voice-guide.md](../.agents/brand-voice-guide.md).
+Decisões que guiam este calendário: 3 posts de feed por semana, no máximo 1 reels por
+semana, sempre gravação de tela do app (computador ou celular) ou filmagem do aparelho
+em uso sem ninguém no quadro, com texto na tela e trilha sonora. Os outros 2 posts da
+semana são carrossel ou card de design. Voz: [brand-voice-guide.md](../.agents/brand-voice-guide.md).
 Público e posicionamento: [product-marketing-context.md](../.agents/product-marketing-context.md).
 
 Objetivo do mês: colocar a presença no ar com constância e gerar os primeiros cadastros
@@ -17,23 +20,31 @@ no teste de 7 dias vindos do perfil. Todo CTA aponta pro teste sem cartão, link
 |---|---|---|---|
 | A tese | 40% | Educar: pico e vale, horário errado, matriz do dia. É o conteúdo que faz a pessoa se reconhecer e seguir o perfil. | "Não é falta de foco, é horário errado." |
 | Produto na prática | 30% | Tela do app resolvendo uma situação real: montar o dia, aviso de pico invadido, Resolver com IA, relatório. | "Monte o dia em 2 minutos." |
-| Vida da dona de negócio | 30% | Identificação e humor seco sobre o dia invadido. É onde entra o reels com rosto. | "Quem decide o seu dia: você ou o WhatsApp?" |
+| Vida da dona de negócio | 30% | Identificação e humor seco sobre o dia invadido, em carrossel e card de design. | "Quem decide o seu dia: você ou o WhatsApp?" |
 
 ## Ritmo semanal
 
 | Dia | Formato | Tamanho | Vai pro TikTok? |
 |---|---|---|---|
 | Segunda | Carrossel (6 a 8 slides) | 1080x1350 (4:5) | não |
-| Quarta | Reels sem rosto (tela do app ou texto animado) | 1080x1920 | sim |
-| Sexta | Reels com rosto (falado, 20 a 40 segundos) | 1080x1920 | sim |
+| Quarta | Reels de gravação de tela (sem apresentador, texto na tela + trilha) | 1080x1920 | sim |
+| Sexta | Card de design ou carrossel | 1080x1350 (4:5) | não |
+
+Nenhum post depende de alguém na frente da câmera. O reels da semana é sempre gravação
+de tela do app ou filmagem do computador ou celular em uso, sem ninguém no quadro; a
+comunicação é por texto na tela, com trilha sonora, sem narração em voz. Quando ajudar
+a demonstrar, um carrossel pode levar 1 slide de vídeo curto (5 a 15 segundos, gravação
+de tela do app); a capa do carrossel é sempre imagem com o gancho, nunca vídeo.
 
 Horário de publicação: 19h nos dois canais. É quando esse público fecha o dia e pega o
 celular. Nas duas primeiras semanas, comparar o alcance com um teste às 12h e fixar o
 que ganhar.
 
-Stories: sem obrigação diária. Três por semana já sustenta: uma enquete ("a que horas
-seu cérebro liga de verdade?"), um print do próprio dia montado no app, um repost do
-feed. Sem emoji, como tudo da marca.
+Stories: 3 por semana, em dias fixos:
+- Terça: enquete do tema da semana (ex.: "a que horas seu cérebro liga de verdade?").
+- Quinta: print do próprio dia montado no app.
+- Sábado: repost do reels da semana com figurinha de link pro teste de 7 dias.
+Sem emoji, como tudo da marca.
 
 Hashtags (mesmo conjunto do carrossel 01): #produtividade #gestaodetempo #donadenegocio #empreendedora.
 No TikTok, trocar por #produtividade #donadenegocio #organizacao.
@@ -47,18 +58,19 @@ Apresentar a ideia central pra quem nunca viu a marca.
 **Terça 1/9, carrossel.** Já está pronto: [carrossel-01-horario-errado.md](./carrossel-01-horario-errado.md).
 Capa: "Não é falta de foco. É horário errado."
 
-**Quarta 2/9, reels sem rosto.** A curva de energia do dia animada (a mesma da landing),
-com o pico subindo em laranja.
-Gancho nos 3 segundos: "Seu cérebro não rende igual o dia inteiro."
+**Quarta 2/9, reels de gravação de tela.** A curva de energia do dia, a mesma da landing.
+O que gravar: a tela do celular rolando a landing do smartdayz.com até a seção da curva
+de energia, deixando a animação rodar com o pico subindo em laranja.
+Gancho nos 3 segundos, em texto na tela: "Seu cérebro não rende igual o dia inteiro."
 Texto na tela: ele sobe, cai e sobe de novo, em ciclos que se repetem. A coisa difícil
 tem que cair na subida. CTA: teste 7 dias sem cartão, link na bio.
 
-**Sexta 4/9, reels com rosto.** Falado, direto pra câmera, tom de conversa.
-Gancho: "Você marcou a coisa mais difícil da semana pras 8h. Seu cérebro só chega no
-pico à tarde."
-Roteiro: contar o dia que rendeu metade, nomear o erro (hora vaga não é hora boa) e
-fechar com "não é falta de foco, é horário errado". CTA falado: o teste é grátis, 7 dias,
-sem cartão.
+**Sexta 4/9, card de design.** Era o reels falado; o gancho vira a arte.
+Card na identidade do carrossel 01 (fundo papel, destaque laranja), com a frase:
+"Você marcou a coisa mais difícil da semana pras 8h. Seu cérebro só chega no pico à tarde."
+Legenda: contar o dia que rendeu metade, nomear o erro (hora vaga não é hora boa) e
+fechar com "não é falta de foco, é horário errado". CTA: o teste é grátis, 7 dias,
+sem cartão, link na bio.
 
 ## Semana 2 (8 a 13/9): a matriz do dia
 
@@ -71,15 +83,18 @@ da loja, boleto, fornecedor cobrando), um quadrante por slide, e o fechamento: f
 agora, agendar, delegar ou cortar. Último slide: o SmartDayZ monta essa matriz sozinho
 todo dia. CTA: teste 7 dias.
 
-**Quarta 9/9, reels sem rosto.** Tela do app, montagem acelerada.
-Gancho: "Monte o dia em 2 minutos."
-Mostrar: criar tarefa, um clique em importante, um clique em urgente, o app posiciona
-na matriz e aponta o horário. Texto final: você decide o que importa, ele decide a hora.
+**Quarta 9/9, reels de gravação de tela.** O app montando o dia, em montagem acelerada.
+Gancho, em texto na tela: "Monte o dia em 2 minutos."
+O que gravar: a tela do celular com o app aberto: criar uma tarefa, um toque em
+importante, um toque em urgente, o app posiciona na matriz e aponta o horário. Acelerar
+a gravação até caber em uns 20 segundos. Texto final: você decide o que importa, ele
+decide a hora.
 
-**Sexta 11/9, reels com rosto.** Humor seco.
-Gancho: "Quem decide o seu dia: você ou o WhatsApp?"
-Roteiro: a agenda estava linda às 8h da manhã. Aí o cliente chamou, a escola chamou, o
-fornecedor chamou. Às 18h a tarefa importante continua lá, intacta. Fechar: o problema
+**Sexta 11/9, carrossel de humor seco.** Era o reels falado; a história vira uma linha
+do tempo em slides.
+Capa: "Quem decide o seu dia: você ou o WhatsApp?"
+Slides: 8h, a agenda estava linda. 9h, o cliente chamou. 10h, a escola chamou. 11h, o
+fornecedor chamou. 18h, a tarefa importante continua lá, intacta. Fechamento: o problema
 não é você, é o dia sem dono. CTA: link na bio.
 
 ## Semana 3 (14 a 20/9): proteger o pico
@@ -92,16 +107,18 @@ a proposta difícil jogada pro vale), a regra do app de no máximo 3 atividades 
 pra não virar lista lotada, e o fechamento: proteja essa janela como você protege
 reunião com cliente.
 
-**Quarta 16/9, reels sem rosto.** Tela do app no momento do aviso.
-Gancho: "Alguém marcou reunião no seu melhor horário."
-Mostrar: o aviso do app quando algo não importante entra no pico, e o SOS: emergência
-de verdade fura a fila, o resto espera. Texto final: o app avisa, você decide.
+**Quarta 16/9, reels de gravação de tela.** O momento do aviso.
+Gancho, em texto na tela: "Alguém marcou reunião no seu melhor horário."
+O que gravar: a tela do app: agendar uma tarefa não importante dentro do pico até o
+aviso aparecer, mostrar o aviso por inteiro, depois marcar uma emergência como SOS e
+ela furar a fila. Texto final: o app avisa, você decide.
 
-**Sexta 18/9, reels com rosto.** Falado, tom pessoal.
-Gancho: "Eu protejo reunião com cliente. E o horário em que eu rendo, quem protege?"
-Roteiro: ninguém marca por cima de reunião com cliente, mas todo mundo marca por cima
-da sua melhor hora, inclusive você. Fechar: comece tratando sua melhor janela como
-compromisso. O SmartDayZ faz isso sozinho.
+**Sexta 18/9, card de design.** Era o reels falado; a pergunta vira a arte.
+Card com a frase: "Você protege reunião com cliente. E a hora em que você rende, quem
+protege?"
+Legenda: ninguém marca por cima de reunião com cliente, mas todo mundo marca por cima
+da sua melhor hora, inclusive você. Comece tratando sua melhor janela como compromisso.
+O SmartDayZ faz isso sozinho. CTA: teste 7 dias sem cartão, link na bio.
 
 ## Semana 4 (21 a 27/9): destravar e ver resultado
 
@@ -112,16 +129,20 @@ Slides: a tarefa travada (o e-mail difícil, a proposta, a decisão), por que el
 (é a mais pesada e sempre cai na hora errada), e o Resolver com IA: um toque e o
 SmartDayZ escreve. Não sugere: escreve. Último slide: recurso do Pro, teste 7 dias sem cartão.
 
-**Quarta 23/9, reels sem rosto.** Tela do relatório da semana.
-Gancho: "Só 2 das 9 coisas importantes caíram no seu pico."
-Mostrar: o relatório com o número real, e a reorganização da semana seguinte em seguida.
-Texto final: o relatório mostra pra onde o seu pico está indo. Ele é do Pro.
+**Quarta 23/9, reels de gravação de tela.** O relatório da semana.
+Gancho, em texto na tela: "Só 2 das 9 coisas importantes caíram no seu pico."
+O que gravar: a tela do app abrindo o relatório da semana com um número real ruim,
+parar no número, depois mostrar a reorganização da semana seguinte. Texto final: o
+relatório mostra pra onde o seu pico está indo. Ele é do Pro.
 
-**Sexta 25/9, reels com rosto.** História real, a mais honesta do mês.
-Gancho: "Uma tarefa que eu empurrei por uma semana saiu em 10 minutos."
-Roteiro: contar uma tarefa específica (real, da Wanessa ou de quem testou) que o
-Resolver com IA destravou, mostrando o antes e o depois. Sem promessa inflada: foi uma
-tarefa, não a vida inteira. CTA: teste os 7 dias e escolha a sua tarefa travada.
+**Sexta 25/9, carrossel com 1 slide de vídeo.** Era o reels falado; a história real
+vira antes e depois em slides.
+Capa (imagem com o gancho, nunca vídeo): "Uma tarefa empurrada por uma semana saiu em
+10 minutos."
+Slides: a tarefa específica (real, da Wanessa ou de quem testou), os dias empurrando,
+e no meio 1 slide de vídeo de 5 a 15 segundos: gravação de tela do Resolver com IA
+recebendo o toque e escrevendo. Fechamento sem promessa inflada: foi uma tarefa, não a
+vida inteira. CTA: teste os 7 dias e escolha a sua tarefa travada.
 
 ## Fechamento (28 a 30/9)
 
@@ -131,16 +152,18 @@ de contexto: não substitui sua agenda, decide o que entra em cada horário; R$ 
 menos que uma hora do seu trabalho; marcar importante e urgente é um clique cada;
 funciona offline, seus dados ficam no aparelho.
 
-**Quarta 30/9, reels sem rosto.** Recap do mês em texto animado.
-Gancho: "Setembro em 4 ideias."
-As 4 teses do mês, uma por tela: horário errado, matriz do dia, proteger o pico,
-destravar. Fechar: outubro começa com o seu dia montado. Teste 7 dias sem cartão.
+**Quarta 30/9, reels de gravação de tela.** Recap do mês.
+Gancho, em texto na tela: "Setembro em 4 ideias."
+O que gravar: 4 telas do app em sequência, uma por ideia: o dia montado em volta do
+pico (horário errado), a matriz do dia, o aviso de pico invadido, o Resolver com IA.
+Cada tela entra com a tese do mês em texto. Fechar: outubro começa com o seu dia
+montado. Teste 7 dias sem cartão.
 
 ---
 
 ## TikTok: como funciona o repost
 
-- Os reels de quarta e sexta sobem no TikTok no mesmo dia, também às 19h.
+- O reels de quarta sobe no TikTok no mesmo dia, também às 19h.
 - Sem hashtag de Instagram no texto, sem marca d'água de outro app.
 - A capa do vídeo leva a frase do gancho, porque no TikTok muita gente decide pelo thumb.
 - Nenhum conteúdo exclusivo por enquanto. TikTok é alcance extra de graça, não um
@@ -171,3 +194,5 @@ rastreáveis vindos do perfil. Número de seguidor não é meta.
 3. **Checklist de voz antes de publicar** (do guia): verbo dizendo o que fazer, cobrança
    na agenda e nunca na pessoa, número onde cabe número, sem emoji, sem travessão, e a
    pergunta final: essa frase serviria pro Todoist? Se sim, reescreve.
+4. **Gravação de tela sempre com dados de exemplo realistas.** Nunca dado de cliente ou
+   tarefa pessoal de verdade no quadro; montar um dia de exemplo antes de gravar.

@@ -4,7 +4,8 @@
 
 **Artes prontas:** [carrossel-02-matriz-do-dia/](./carrossel-02-matriz-do-dia/), arquivos
 `slide-01.png` a `slide-08.png`, já no tamanho de post. A fonte é o `slides.html` da mesma
-pasta; pra regenerar depois de editar, rode o `render.sh`.
+pasta; pra regenerar depois de editar, rode o `render.sh`. Para editar no Canva, importe
+o `carrossel-02-editavel.pdf` da mesma pasta: 8 páginas 4:5 com o texto editável.
 
 Post da semana 2 do [calendário de setembro](./calendario-editorial-setembro-2026.md).
 Objetivo: ensinar a matriz do dia com exemplos da dona de negócio e levar pro teste de

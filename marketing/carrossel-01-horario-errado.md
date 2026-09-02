@@ -2,6 +2,10 @@
 
 *Criado em: 2026-08-30. Formato: 8 slides, 1080x1350 (4:5).*
 
+**Artes prontas:** [carrossel-01/](./carrossel-01/), arquivos `slide-01.png` a `slide-08.png`,
+no tamanho de post. Para editar no Canva, importe o `carrossel-01-editavel.pdf` da mesma pasta:
+ele tem 8 páginas 4:5 com o texto editável.
+
 Objetivo: apresentar a tese do SmartDayZ pra quem nunca viu a marca e levar pro teste
 de 7 dias. Voz: [brand-voice-guide.md](../.agents/brand-voice-guide.md).
 
