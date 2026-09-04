@@ -43,3 +43,11 @@ next-env.d.ts
 
 # Repo separado do app publicado (GitHub Pages, remoto proprio)
 /app-deploy/
+
+# marketing vive no Drive, nunca no git
+marketing/
+.agents/brand-voice-guide.md
+.agents/ihc-historias.md
+.agents/ihc-persona.md
+.agents/product-marketing-context.md
+.agents/copy-home.md
