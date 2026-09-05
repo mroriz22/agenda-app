@@ -304,7 +304,7 @@ function SiteFooter({ appName }: { appName: string }) {
             head="Conta"
             links={[
               { label: "Criar conta", href: "/login" },
-              { label: "Meu dia", href: "/dashboard" },
+              { label: "Meu dia", href: "/app" },
             ]}
           />
         </div>

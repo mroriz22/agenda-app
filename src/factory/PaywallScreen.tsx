@@ -21,24 +21,21 @@ export function PaywallScreen({ access, userId }: Props) {
   return (
     <main className="mx-auto flex min-h-full w-full max-w-lg flex-col justify-center gap-6 px-6 py-16">
       <div className="space-y-2">
-        <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">
-          paywall
-        </p>
         <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
           {access?.status === "expired" || reason === "trial_expired"
-            ? "Seu trial acabou"
+            ? "Seu teste acabou"
             : "Assine para continuar"}
         </h1>
         <p className="text-zinc-600 dark:text-zinc-400">
           {access?.status === "trial"
-            ? "Trial ativo — se você está vendo isso, algo está inconsistente."
-            : "Desbloqueie o produto completo via Quack Checkout."}
+            ? "Seu teste está ativo. Se esta tela apareceu, recarregue a página."
+            : "Assine para continuar com o produto completo."}
         </p>
       </div>
 
       {access?.trialEndsAt && (
         <p className="text-sm text-zinc-500">
-          Trial até {access.trialEndsAt.toLocaleString?.() ?? String(access.trialEndsAt)}
+          Teste até {access.trialEndsAt.toLocaleString?.() ?? String(access.trialEndsAt)}
         </p>
       )}
 
@@ -51,13 +48,16 @@ export function PaywallScreen({ access, userId }: Props) {
           Assinar agora
         </a>
       ) : (
+        /* Sem link de checkout configurado: o cliente recebe um caminho,
+           nunca um recado de configuração. */
         <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
-          Defina <code>QUACK_CHECKOUT_URL</code> no env (link do produto/offer na Quack).
+          A assinatura ainda não está aberta. Enquanto isso, a agenda continua
+          funcionando na versão grátis.
         </p>
       )}
 
-      <a href="/dashboard" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
-        Tentar de novo →
+      <a href="/app" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
+        Voltar para a agenda →
       </a>
     </main>
   );

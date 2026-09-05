@@ -41,7 +41,7 @@ export default function LoginPage() {
         const res = await authClient.signIn.email({ email, password });
         if (res.error) throw new Error(res.error.message ?? "login failed");
       }
-      router.push("/dashboard");
+      router.push("/app");
       router.refresh();
     } catch (err) {
       setError(recado(err instanceof Error ? err.message : String(err), mode));

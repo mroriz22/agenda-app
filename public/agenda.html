@@ -902,12 +902,12 @@
     <div id="pwLogin">
       <p class="theme-sub" id="pwLoginSub">Entre na sua conta para desbloquear o Pro: múltiplos contextos, histórico ilimitado, relatório do pico, temas e export.</p>
       <div class="field">
-        <label>Email</label>
+        <label>E-mail</label>
         <input type="email" id="pwEmail" placeholder="voce@email.com" autocomplete="email">
       </div>
       <div class="field">
         <label>Senha</label>
-        <input type="password" id="pwPass" placeholder="mínimo 6 caracteres" autocomplete="current-password">
+        <input type="password" id="pwPass" placeholder="mínimo 8 caracteres" autocomplete="current-password">
       </div>
       <button class="btn" id="pwAuthBtn" style="width:100%;margin-top:0.5rem">Entrar</button>
       <button class="btn-ghost" id="pwToggleMode" style="width:100%;margin-top:0.5rem">Não tem conta? Criar conta</button>
@@ -1320,12 +1320,13 @@
   }
   function friendlyAuthErr(msg) {
     if (!msg) return "Não deu pra entrar. Tente de novo.";
-    if (/invalid (login credentials|email or password)|invalid_email_or_password/i.test(msg)) return "Email ou senha incorretos.";
-    if (/already registered|already exists|user_already_exists/i.test(msg)) return "Esse email já tem conta. Faça login.";
-    if (/(at least|minimum).*(6|characters)|password.*6/i.test(msg)) return "A senha precisa de pelo menos 6 caracteres.";
-    if (/valid email|invalid email/i.test(msg)) return "Digite um email válido.";
+    if (/invalid (login credentials|email or password)|invalid_email_or_password|user not found|invalid password/i.test(msg)) return "E-mail ou senha não conferem.";
+    if (/already registered|already exists|user_already_exists/i.test(msg)) return "Esse e-mail já tem conta. Faça login.";
+    if (/too short|(at least|minimum).*(8|characters)|password.*(6|8)/i.test(msg)) return "A senha precisa de pelo menos 8 caracteres.";
+    if (/valid email|invalid email/i.test(msg)) return "Digite um e-mail válido.";
     if (/rate limit|too many/i.test(msg)) return "Muitas tentativas. Espere um pouco e tente de novo.";
-    return msg;
+    // Recado técnico do servidor nunca vai pra tela do cliente.
+    return "Não deu pra concluir agora. Tente de novo em instantes.";
   }
 
   // temas (Pro): só trocam a marca (accent/indigo/glow). Pico e quadrantes ficam fixos.
@@ -1911,6 +1912,9 @@
     $("#pwToggleMode").textContent = mode === "signin" ? "Não tem conta? Criar conta" : "Já tem conta? Entrar";
     $("#pwLoginSub").textContent = (mode === "signin" ? "Entre na sua conta" : "Crie sua conta")
       + " para desbloquear o Pro: múltiplos contextos, histórico ilimitado, relatório do pico, temas e export.";
+    $("#pwPass").setAttribute("autocomplete", mode === "signin" ? "current-password" : "new-password");
+    $("#pwMsg").textContent = "";
+    $("#pwMsg").className = "pw-msg";
   }
   function openPaywall() {
     $("#upsellOverlay").classList.remove("open");
@@ -1941,6 +1945,12 @@
     const email = $("#pwEmail").value.trim(), pass = $("#pwPass").value;
     if (!email) { $("#pwEmail").focus(); return; }
     if (!pass) { $("#pwPass").focus(); return; }
+    if (pwMode === "signup" && pass.length < 8) {
+      $("#pwMsg").textContent = "A senha precisa de pelo menos 8 caracteres.";
+      $("#pwMsg").className = "pw-msg err";
+      $("#pwPass").focus();
+      return;
+    }
     const btn = $("#pwAuthBtn"); const orig = btn.textContent;
     btn.disabled = true; btn.textContent = pwMode === "signin" ? "Entrando..." : "Criando...";
     $("#pwMsg").textContent = ""; $("#pwMsg").className = "pw-msg";

@@ -2,10 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  // O produto é o app da agenda (arquivo único). A home serve ele direto;
-  // o paywall e a sincronização são checados no servidor, nas rotas /api.
+  // "/" é a landing (src/app/page.tsx). O produto, a agenda de arquivo
+  // único, é servido em /app. O paywall e a sincronização continuam
+  // checados no servidor, nas rotas /api.
   async rewrites() {
-    return [{ source: "/", destination: "/agenda.html" }];
+    return [{ source: "/app", destination: "/agenda.html" }];
   },
 };
 

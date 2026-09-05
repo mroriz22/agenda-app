@@ -5,6 +5,6 @@ import { redirect } from "next/navigation";
 export default async function PaywallPage() {
   const ctx = await getSessionAccess();
   if (!ctx) redirect("/login");
-  if (ctx.access.allowed) redirect("/dashboard");
+  if (ctx.access.allowed) redirect("/app");
   return <PaywallScreen access={ctx.access} userId={ctx.user.id} />;
 }
