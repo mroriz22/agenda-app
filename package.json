@@ -13,6 +13,7 @@
     "db:studio": "drizzle-kit studio",
     "factory:import": "node scripts/import-external.mjs",
     "factory:smoke": "bash scripts/smoke-factory.sh",
+    "test:e2e": "node scripts/e2e-smoke.mjs",
     "factory:new": "bash scripts/new-saas.sh"
   },
   "dependencies": {
