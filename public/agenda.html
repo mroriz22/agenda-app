@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SmartDayZ</title>
-<meta name="description" content="SmartDayZ — sua agenda com matriz de Eisenhower e cronobiologia: organize o dia protegendo seu pico de energia (15h-22h).">
+<meta name="description" content="SmartDayZ · sua agenda com matriz de Eisenhower e cronobiologia: organize o dia protegendo seu pico de energia (15h-22h).">
 <link rel="canonical" href="https://smartdayz.com/">
 <meta name="theme-color" content="#efe7d6">
 <meta property="og:type" content="website">
@@ -761,12 +761,12 @@
     <div class="matrix-date-head">
       <div>
         <h2 id="matrixDateTitle">Matriz do dia</h2>
-        <div class="md-sub" id="matrixDateSub">Selecione um dia no calendário — cada data tem sua própria matriz.</div>
+        <div class="md-sub" id="matrixDateSub">Selecione um dia no calendário. Cada data tem sua própria matriz.</div>
       </div>
     </div>
     <p class="matrix-intro">
       Arraste (ou toque) cada atividade para o quadrante certo. <b>Importante</b> (vermelho/verde) puxa pro seu
-      <span style="color:var(--gold)">pico de energia 15h–22h</span> — sobretudo o quadrante <b>Foco</b>, onde mora o trabalho que muda o jogo.
+      <span style="color:var(--gold)">pico de energia 15h–22h</span>, sobretudo o quadrante <b>Foco</b>, onde mora o trabalho que muda o jogo.
     </p>
 
     <div class="inbox" id="inbox" data-quad="none">
@@ -831,9 +831,9 @@
         </div>
       </div>
       <button type="button" id="evAiBtn" class="ai-btn">Delegar para Equipe/IA</button>
-      <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz — menos Eliminar — pra passar pra equipe ou mandar a IA resolver.</div>
+      <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz, menos Eliminar, pra passar pra equipe ou mandar a IA resolver.</div>
       <button type="button" id="evResolveBtn" class="btn ai-resolve-btn" style="display:none">Resolver com IA agora</button>
-      <button type="button" id="evSosBtn" class="sos-btn">SOS — emergência</button>
+      <button type="button" id="evSosBtn" class="sos-btn">SOS · emergência</button>
       <div class="sos-hint">Use só pra emergência que precisa cair no pico (15h–22h) da agenda Pessoal.</div>
     </div>
 
@@ -863,9 +863,9 @@
         </div>
       </div>
       <button type="button" id="tkAiBtn" class="ai-btn">Delegar para Equipe/IA</button>
-      <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz — menos Eliminar — pra passar pra equipe ou mandar a IA resolver.</div>
+      <div class="ai-hint">Libera esta atividade pra qualquer quadrante da Matriz, menos Eliminar, pra passar pra equipe ou mandar a IA resolver.</div>
       <button type="button" id="tkResolveBtn" class="btn ai-resolve-btn" style="display:none">Resolver com IA agora</button>
-      <button type="button" id="tkSosBtn" class="sos-btn">SOS — emergência</button>
+      <button type="button" id="tkSosBtn" class="sos-btn">SOS · emergência</button>
       <div class="sos-hint">Use só pra emergência que precisa cair no pico (15h–22h) da agenda Pessoal.</div>
     </div>
 
@@ -1020,8 +1020,8 @@
   const PEAK_START = 15 * 60, PEAK_END = 22 * 60;   // minutos
   const TL_START = 6 * 60, TL_END = 23 * 60;         // janela da timeline
   const QUAD = {
-    q1: { name: "Fazer agora", tag: "1", sub: "Urgente + Importante", color: "var(--q1)", important: true, tip: "Crítico — encaixe no pico se exigir cabeça" },
-    q2: { name: "Foco / Agendar", tag: "2", sub: "Importante + Não urgente", color: "var(--q2)", important: true, tip: "Onde mora o que muda o jogo — proteja o pico 15h–22h" },
+    q1: { name: "Fazer agora", tag: "1", sub: "Urgente + Importante", color: "var(--q1)", important: true, tip: "Crítico. Encaixe no pico se exigir cabeça" },
+    q2: { name: "Foco / Agendar", tag: "2", sub: "Importante + Não urgente", color: "var(--q2)", important: true, tip: "Onde mora o que muda o jogo. Proteja o pico 15h–22h" },
     q3: { name: "Delegar", tag: "3", sub: "Urgente + Não importante", color: "var(--q3)", important: false, tip: "" },
     q4: { name: "Eliminar", tag: "4", sub: "Nem urgente nem importante", color: "var(--q4)", important: false, tip: "" }
   };
@@ -1526,7 +1526,7 @@
     if (off) {
       const banner = document.createElement("div");
       banner.className = "dayoff-banner";
-      banner.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg> Dia de folga — hoje só a agenda Pessoal aceita novos itens.';
+      banner.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg> Dia de folga. Hoje só a agenda Pessoal aceita novos itens.';
       list.appendChild(banner);
     }
 
@@ -1685,19 +1685,19 @@
     const nm = "“" + item.title + "”";
     const dueUrg = item.due && !item.entrega && daysUntil(item.due) <= 2 && !markUrg(item);
     const urgTxt = dueUrg ? "urgente (prazo em ≤2 dias)" : "urgente";
-    if (quad === "q1") return "Fazer Agora é pra o que é urgente ou importante. " + nm + " não está marcada como nenhum dos dois — marque Urgente e/ou Importante primeiro.";
+    if (quad === "q1") return "Fazer Agora é pra o que é urgente ou importante. " + nm + " não está marcada como nenhum dos dois. Marque Urgente e/ou Importante primeiro.";
     if (quad === "q2") {
       if (!markImp(item)) return "Agendar é pra trabalho importante. " + nm + " não está marcada como Importante.";
-      return "Agendar é pra o importante NÃO urgente. " + nm + " é " + urgTxt + " — aqui perderia o prazo; o lugar é Fazer Agora.";
+      return "Agendar é pra o importante NÃO urgente. " + nm + " é " + urgTxt + ". Aqui perderia o prazo; o lugar é Fazer Agora.";
     }
     if (quad === "q3") {
-      if (markImp(item)) return "Delegar é pra o que NÃO é importante. " + nm + " está marcada como Importante — foque nela, não delegue.";
-      return "Delegar é pra o urgente (mas não importante). " + nm + " não está marcada como Urgente — ligue “Delegar para Equipe/IA” na edição pra mandar mesmo sem urgência.";
+      if (markImp(item)) return "Delegar é pra o que NÃO é importante. " + nm + " está marcada como Importante. Foque nela, não delegue.";
+      return "Delegar é pra o urgente (mas não importante). " + nm + " não está marcada como Urgente. Ligue “Delegar para Equipe/IA” na edição pra mandar mesmo sem urgência.";
     }
     if (quad === "q4") {
-      if (markAI(item)) return "Eliminar não recebe o que está delegado. " + nm + " está em “Delegar para Equipe/IA” — se é pra descartar, desligue a delegação primeiro.";
-      if (markImp(item)) return "Eliminar é pra o que não importa. " + nm + " está marcada como Importante — não descarte.";
-      return "Eliminar é pra o que não é urgente. " + nm + " é " + urgTxt + " — trate antes de descartar.";
+      if (markAI(item)) return "Eliminar não recebe o que está delegado. " + nm + " está em “Delegar para Equipe/IA”. Se é pra descartar, desligue a delegação primeiro.";
+      if (markImp(item)) return "Eliminar é pra o que não importa. " + nm + " está marcada como Importante. Não descarte.";
+      return "Eliminar é pra o que não é urgente. " + nm + " é " + urgTxt + ". Trate antes de descartar.";
     }
     return null;
   }
@@ -1766,9 +1766,9 @@
     // matriz POR DATA: só as atividades do dia selecionado.
     // tarefas SEM prazo são onipresentes (aparecem em qualquer dia) pra poderem ser classificadas.
     // tarefas COM prazo ocupam TODOS os dias do intervalo início→prazo (inclusive): trabalho
-    // que dura vários dias aparece em cada um deles. A "Entrega — <nome>" (start===due) some
+    // que dura vários dias aparece em cada um deles. A "Entrega · <nome>" (start===due) some
     // no seu único dia. Datas ISO YYYY-MM-DD comparam corretamente por ordem lexicográfica.
-    $("#matrixDateTitle").textContent = "Matriz — " + prettyDay(selected);
+    $("#matrixDateTitle").textContent = "Matriz · " + prettyDay(selected);
     $("#matrixDateSub").textContent = prettyDateFull(selected) + (isDayOff(selected) ? " · day off" : "");
 
     const evOfDay = ctxData().events.filter(e => e.date === selected);
@@ -1892,7 +1892,7 @@
   }
   const UPSELL = {
     context: { title: "Múltiplos contextos", text: "Separe Pessoal, cada negócio e cada projeto em agendas e matrizes independentes. No plano grátis você tem 1 contexto." },
-    history: { title: "Histórico ilimitado", text: "No plano grátis você acessa os últimos 30 dias. Com o Pro, todo o seu histórico fica disponível — sem limite de tempo." },
+    history: { title: "Histórico ilimitado", text: "No plano grátis você acessa os últimos 30 dias. Com o Pro, todo o seu histórico fica disponível, sem limite de tempo." },
     report: { title: "Relatório cronobiológico", text: "Veja toda semana quanto do seu trabalho importante caiu no pico 15h–22h, com insight acionável e distribuição por horário. Disponível no Pro." },
     theme: { title: "Temas", text: "Troque a paleta do app entre várias vibes. No plano grátis você fica no tema Roxo padrão." },
     export: { title: "Exportar agenda", text: "Leve seus compromissos pro Google, Apple ou Outlook (.ics) ou gere um PDF da sua agenda. Disponível no Pro." },
@@ -1981,7 +1981,7 @@
       ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
       document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
       cb && cb();
-    } catch (e) { toast("Não deu pra copiar — selecione o texto manualmente."); }
+    } catch (e) { toast("Não deu pra copiar. Selecione o texto manualmente."); }
   }
 
   // chamada isolada à rota /api/product/ai (proxy da IA).
@@ -2032,7 +2032,7 @@
     }
     L.push(sugs.length
       ? ("Ajustes que o app já apontou (NÃO repita, complemente): " + sugs.map(s => s.text.replace(/[“”"]/g, "")).join(" | "))
-      : "O app não encontrou nenhum ajuste — a disposição das atividades está coerente. Ainda assim, entregue uma dica útil de produtividade/gestão do tempo.");
+      : "O app não encontrou nenhum ajuste. A disposição das atividades está coerente. Ainda assim, entregue uma dica útil de produtividade/gestão do tempo.");
     return L.join("\n");
   }
 
@@ -2093,7 +2093,7 @@
     const ctx = activeCtx();
     const now = new Date();
     const dtstamp = now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) + "T" + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + "Z";
-    const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SmartDayZ//PT-BR//", "CALSCALE:GREGORIAN", "X-WR-CALNAME:SmartDayZ — " + icsEscape(ctx.name)];
+    const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SmartDayZ//PT-BR//", "CALSCALE:GREGORIAN", "X-WR-CALNAME:SmartDayZ · " + icsEscape(ctx.name)];
     ctxData().events.forEach(e => {
       L.push("BEGIN:VEVENT", "UID:" + e.id + "@agenda.local", "DTSTAMP:" + dtstamp);
       if (e.time) {
@@ -2151,7 +2151,7 @@
       tasks.forEach(t => { tk += '<li>☐ ' + escapeHTML(t.title) + (t.due ? ' <span class="due">' + escapeHTML(shortDate(t.due)) + "</span>" : "") + "</li>"; });
       tk += "</ul>";
     }
-    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>SmartDayZ — ' + escapeHTML(ctx.name) + '</title><style>' +
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>SmartDayZ · ' + escapeHTML(ctx.name) + '</title><style>' +
       '*{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#23291f;max-width:680px;margin:0 auto;padding:32px;}' +
       'header{border-bottom:2px solid #8f2f27;padding-bottom:12px;margin-bottom:18px;}h1{margin:0;font-size:24px;letter-spacing:-.02em;}' +
       '.brand-row{display:flex;align-items:center;gap:10px;}.blogo{width:34px;height:34px;object-fit:contain;display:block;}' +
@@ -2241,7 +2241,7 @@
     timedAll.forEach(x => {
       // dentro do pico: o que não é importante deve sair (libera o pico pro que muda o jogo).
       if (!markImp(x) && inPeak(x.time)) {
-        out.push({ type: "time", text: "“" + escapeHTML(x.title) + "” não é importante e está no pico às " + x.time + ". Tire do pico — 15h–22h é pro que muda o jogo." });
+        out.push({ type: "time", text: "“" + escapeHTML(x.title) + "” não é importante e está no pico às " + x.time + ". Tire do pico: 15h–22h é pro que muda o jogo." });
       // fora do pico: só sugere trazer o que é IMPORTANTE E URGENTE (junto), até lotar as 3 vagas do dia.
       } else if (markImp(x) && markUrg(x) && !inPeak(x.time)) {
         const dk = dateOf(x);
@@ -2252,7 +2252,7 @@
       }
     });
     // (2) importante sem horário: sem hora não dá pra saber se cai no pico.
-    d.noTimeItems.slice(0, 3).forEach(x => out.push({ type: "time", text: "Defina um horário pra “" + escapeHTML(x.title) + "” — sem hora não dá pra saber se cai no pico." }));
+    d.noTimeItems.slice(0, 3).forEach(x => out.push({ type: "time", text: "Defina um horário pra “" + escapeHTML(x.title) + "”. Sem hora não dá pra saber se cai no pico." }));
     // (3) urgência por PRAZO (global).
     ctxData().tasks.filter(t => !t.entrega && !t.done && t.due && t.due >= todayISO).forEach(t => {
       const dd = daysUntil(t.due);
@@ -2332,7 +2332,7 @@
       '<div class="suggest-head"><svg class="ico" aria-hidden="true"><use href="#i-bulb"/></svg> Sugestões de melhoria</div>' +
       (sugs.length
         ? '<ul class="suggest-list">' + sugs.map(s => '<li class="sug ' + s.type + '">' + s.text + '</li>').join("") + '</ul>'
-        : '<div class="suggest-ok">Nada a ajustar por aqui — horários e prazos estão coerentes.</div>') +
+        : '<div class="suggest-ok">Nada a ajustar por aqui. Horários e prazos estão coerentes.</div>') +
       '</div>';
 
     // dica da IA (Pro): coach de produtividade que lê o período, mesmo quando está tudo coerente.
@@ -2446,7 +2446,7 @@
       const title = $("#evTitle").value.trim(); if (!title) { $("#evTitle").focus(); return; }
       const date = $("#evDate").value || selected;
       const time = $("#evTime").value;
-      if (!time) { $("#formMsg").textContent = "Defina um horário — agora é obrigatório em todo compromisso."; $("#evTime").focus(); return; }
+      if (!time) { $("#formMsg").textContent = "Defina um horário. Agora é obrigatório em todo compromisso."; $("#evTime").focus(); return; }
       // day off: nesse dia só a agenda Pessoal aceita novos itens.
       if (isDayOff(date) && !isPersonalCtx()) {
         $("#formMsg").textContent = "Dia de folga (day off): nesse dia só dá pra agendar na agenda Pessoal.";
@@ -2455,7 +2455,7 @@
       // pico na Pessoal (com mais de uma agenda): reservado pro trabalho que muda o jogo.
       // A ÚNICA quebra é a emergência (SOS) — day off não libera mais o pico.
       if (isPersonalCtx() && store.contexts.length > 1 && time && inPeak(time) && !sosFlag) {
-        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como SOS se for emergência.";
+        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário, ou marque como SOS se for emergência.";
         return;
       }
       if (editing && editing.kind === "event") {
@@ -2470,7 +2470,7 @@
       const start = $("#tkStart").value || selected;
       const due = $("#tkDue").value || null;
       const time = $("#tkTime").value;
-      if (!time) { $("#formMsg").textContent = "Defina um horário — agora é obrigatório em toda tarefa."; $("#tkTime").focus(); return; }
+      if (!time) { $("#formMsg").textContent = "Defina um horário. Agora é obrigatório em toda tarefa."; $("#tkTime").focus(); return; }
       // day off também restringe tarefas com prazo caído num dia de folga fora da Pessoal.
       if (due && isDayOff(due) && !isPersonalCtx()) {
         $("#formMsg").textContent = "Dia de folga (day off): nesse dia só dá pra agendar na agenda Pessoal.";
@@ -2478,7 +2478,7 @@
       }
       // mesma regra do pico dos compromissos: na Pessoal (com +1 agenda), pico só com SOS.
       if (isPersonalCtx() && store.contexts.length > 1 && time && inPeak(time) && !sosFlag) {
-        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário — ou marque como SOS se for emergência.";
+        $("#formMsg").textContent = "Na agenda Pessoal, o pico 15h–22h é reservado pro trabalho que muda o jogo. Escolha outro horário, ou marque como SOS se for emergência.";
         return;
       }
       if (editing && editing.kind === "task") {
@@ -2490,7 +2490,7 @@
         ctxData().tasks.push({ id: parentId, title, start, due, time: time || "", done: false, doneAt: null, quad: null, sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark });
         // prazo depois do início gera automaticamente uma tarefa de ENTREGA no dia do prazo (herda hora e marcações).
         if (due && due > start) {
-          ctxData().tasks.push({ id: uid(), title: "Entrega — " + title, start: due, due, time: time || "", done: false, doneAt: null, quad: null, entrega: true, parentId, sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark });
+          ctxData().tasks.push({ id: uid(), title: "Entrega · " + title, start: due, due, time: time || "", done: false, doneAt: null, quad: null, entrega: true, parentId, sos: !!sosFlag, imp: impMark, urg: urgMark, ai: aiMark });
         }
       }
       // leva o calendário pro dia de início, pra você ver a tarefa cair na matriz dele.
